@@ -14,7 +14,7 @@ public class Driver
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Here are the available port:");
-		String[] portNames = serial.getAvailablePortsByNames();
+		String[] portNames = serial.getAllPortsByNames();
 		for (int i = 0; i < portNames.length; i++)
 		{
 			System.out.println(i + " " + portNames[i]);

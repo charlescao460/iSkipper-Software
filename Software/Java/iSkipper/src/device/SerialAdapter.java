@@ -20,6 +20,11 @@ public class SerialAdapter
 {
 	private final static int WRITE_TIMEOUT = 10_000;
 	private final static int READ_TIMEOUT = 10_000;
+	/* 115200,8,1,N for Arduino's port */
+	private final static int SERIAL_PORT_BAUD_RATE = 115200;
+	private final static int SERIAL_PORT_DATA_BITS = 8;
+	private final static int SERIAL_PORT_STOP_BITS = 1;
+	private final static int SERIAL_PORT_PARITY = SerialPort.NO_PARITY;
 	private SerialPort serialPort;
 	private SerialPort[] availablePorts;
 	private SerialListener listener;
@@ -33,9 +38,9 @@ public class SerialAdapter
 	}
 
 	/**
-	 * @return Available ports' names in a String array
+	 * @return All local serial ports' names in String array.
 	 */
-	public String[] getAvailablePortsByNames()
+	public String[] getAllPortsByNames()
 	{
 		String[] ret = new String[availablePorts.length];
 
@@ -49,7 +54,8 @@ public class SerialAdapter
 
 	/**
 	 * @param index
-	 *            of port in availablePorts array
+	 *            of port in the array returned by
+	 *            {@link SerialAdapter#getAvailablePortsByNames}
 	 * @return if the port was successfully opened
 	 */
 	public boolean setSerialPort(int index)
@@ -70,16 +76,11 @@ public class SerialAdapter
 	}
 
 	/**
-	 * Set the parameters of port to be 115200,8,1,N
+	 * @return whether this serial port is available for communication.
 	 */
-	public void initializePort()
+	public boolean isAvailable()
 	{
-		if (serialPort == null)
-			return;
-		serialPort.setComPortParameters(/* BaudRate */115200, /* DataBits */ 8, /* StopBits */1,
-				/* Parity */SerialPort.NO_PARITY);
-		serialPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, READ_TIMEOUT, WRITE_TIMEOUT);
-		serialPort.addDataListener(listener);
+		return serialPort != null ? serialPort.isOpen() : false;
 	}
 
 	/**
@@ -114,4 +115,16 @@ public class SerialAdapter
 		listener.packetHandler = packetHandler;
 	}
 
+	/**
+	 * Set the parameters of port.
+	 */
+	private void initializePort()
+	{
+		if (serialPort == null)
+			return;
+		serialPort.setComPortParameters(/* BaudRate */SERIAL_PORT_BAUD_RATE, /* DataBits */ SERIAL_PORT_DATA_BITS,
+				/* StopBits */SERIAL_PORT_STOP_BITS, /* Parity */SERIAL_PORT_PARITY);
+		serialPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, READ_TIMEOUT, WRITE_TIMEOUT);
+		serialPort.addDataListener(listener);
+	}
 }
