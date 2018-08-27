@@ -8,7 +8,7 @@ import handler.ReceivedPacketHandlerInterface;
 /**
  * The class for all SerialPort communications.</br>
  * 
- * It aggregates with com.fazecast.jSerialComm.SerialPort
+ * An adapter class for com.fazecast.jSerialComm.SerialPort
  * 
  * @see <a href=
  *      "http://fazecast.github.io/jSerialComm/javadoc/com/fazecast/jSerialComm/SerialPort.html"
@@ -16,7 +16,7 @@ import handler.ReceivedPacketHandlerInterface;
  * @author CSR
  *
  */
-public class Serial
+public class SerialAdapter
 {
 	private final static int WRITE_TIMEOUT = 10_000;
 	private final static int READ_TIMEOUT = 10_000;
@@ -25,7 +25,7 @@ public class Serial
 	private SerialListener listener;
 	private ReceivedPacketHandlerInterface packetHandler;
 
-	public Serial()
+	public SerialAdapter()
 	{
 		serialPort = null;
 		availablePorts = SerialPort.getCommPorts();

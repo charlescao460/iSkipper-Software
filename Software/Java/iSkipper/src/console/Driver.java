@@ -2,7 +2,7 @@ package console;
 
 import java.util.Scanner;
 
-import device.Serial;
+import device.SerialAdapter;
 import support.IClickerID;
 import support.Transcoding;
 
@@ -10,7 +10,7 @@ public class Driver
 {
 	public static void main(String[] args) throws InterruptedException
 	{
-		Serial serial = new Serial();
+		SerialAdapter serial = new SerialAdapter();
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		System.out.println("Here are the available port:");
