@@ -6,7 +6,6 @@
 
 #include "iClickerEmulator.h"
 #include "SerialSymbols.h"
-#include <RingBufCPP.h>
 #include <string.h>
 
 /*For Arduino Nano and RFM69HW*/
@@ -24,8 +23,6 @@ char operationArguments[ARGUMENTS_SIZE];
 uint8_t serialReadLength = 0;
 
 iClickerEmulator clicker(CSN, IRQ_PIN, digitalPinToInterrupt(IRQ_PIN), IS_RFM69HW);
-RingBufCPP<iClickerPacket_t, MAX_BUFFERED_PACKETS> recvBuf;
-
 
 //The Fixed ID for emulating a normal iClikcer
 const uint32_t FIXED_ISKIPPER_ID = 0xCDCDCDCD;
@@ -36,7 +33,7 @@ void setup()
 	Serial.begin(115200);
 	clicker.begin(iClickerChannels::AA);
 	uint8_t thisID[4];
-	intToByteArray(FIXED_ISKIPPER_ID,thisID);
+	intToByteArray(FIXED_ISKIPPER_ID, thisID);
 	while (Serial.read() != OP_COMFIRM_CONNECTION) //Wait until connect
 	{
 		Serial.println(F("Initialization Complete. Waiting for COM command..."));
@@ -54,7 +51,6 @@ void setup()
 	Serial.println(strID);
 }
 
-
 // the loop function runs over and over again until power down or reset
 void loop()
 {
@@ -68,17 +64,6 @@ void loop()
 		clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
 		while (Serial.read() != OP_STOP)
 		{
-			char strCaptureResponse[30];
-			iClickerPacket_t r;
-			//see if there is a pending packet, check if its an answer packet
-			while (recvBuf.pull(&r))
-			{
-				uint8_t *id = r.packet.answerPacket.id;
-				char answer = iClickerEmulator::answerChar((iClickerAnswer_t)r.packet.answerPacket.answer);
-				snprintf(strCaptureResponse, sizeof(strCaptureResponse), "Captured,%c,%02X%02X%02X%02X\n", answer, id[0], id[1], id[2], id[3]);
-				Serial.print(strCaptureResponse);
-			}
-			delay(20);
 		}
 		clicker.stopPromiscuous();
 		Serial.println(F("End Capture"));
@@ -163,7 +148,7 @@ void loop()
 
 		break;
 	}
-	case OP_SUBMIT: 
+	case OP_SUBMIT:
 	{
 		/*Command Format:
 		*	S,<Answer>,<ID>\0
@@ -174,15 +159,15 @@ void loop()
 		/*Format:
 		*	<Answer>,<ID>\0
 		*/
-		while (1) 
+		while (1)
 		{
 
-			if (Serial.available() <= 0) 
+			if (Serial.available() <= 0)
 			{
 				continue;
 			}
 			char operationArguments[11];
-			Serial.readBytesUntil('\0', operationArguments, 11);//Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
+			Serial.readBytesUntil('\0', operationArguments, 11); //Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
 			operationArguments[10] = '\0';
 			if (operationArguments[0] == OP_STOP)
 			{
@@ -208,7 +193,6 @@ void loop()
 		break;
 	}
 
-
 	case OP_RESET:
 	{
 		reset();
@@ -217,7 +201,7 @@ void loop()
 	default:
 	{
 		Serial.println(F("No Running Progress, waiting for commands..."));
-		for (uint16_t wait = 3000; wait > 0; wait--) 
+		for (uint16_t wait = 3000; wait > 0; wait--)
 		{
 			if (Serial.available() > 0)
 				break;
@@ -295,9 +279,8 @@ inline bool isDigit(char c)
 	return c >= '0' && c <= '9';
 }
 
-
 //Output pointer must point to an array of exactly 4 Byte.
-void intToByteArray(uint32_t input,uint8_t* output)
+void intToByteArray(uint32_t input, uint8_t *output)
 {
 	output[0] = input >> 24;
 	output[1] = input >> 16 & 0xFF;
@@ -307,5 +290,9 @@ void intToByteArray(uint32_t input,uint8_t* output)
 
 void recvPacketHandler(iClickerPacket_t *recvd)
 {
-	recvBuf.add(*recvd);
+	char strCaptureResponse[30];
+	uint8_t *id = recvd->packet.answerPacket.id;
+	char answer = iClickerEmulator::answerChar((iClickerAnswer_t)recvd->packet.answerPacket.answer);
+	snprintf(strCaptureResponse, sizeof(strCaptureResponse), "Captured,%c,%02X%02X%02X%02X,%ddBm\n", answer, id[0], id[1], id[2], id[3]);
+	Serial.print(strCaptureResponse);
 }
