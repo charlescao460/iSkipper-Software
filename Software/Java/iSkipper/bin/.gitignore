@@ -1,5 +1,5 @@
-/console/
-/device/
-/handler/
-/support/
 /emulator/
+/device/
+/support/
+/console/
+/handler/

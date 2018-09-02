@@ -93,6 +93,16 @@ public class SerialAdapter
 	}
 
 	/**
+	 * @param toWrite
+	 *            send one single byte to this serial port
+	 */
+	public void writeByte(byte toWrite)
+	{
+		serialPort.writeBytes(new byte[]
+		{ toWrite }, 1);
+	}
+
+	/**
 	 * @return the packetHandler
 	 */
 	public ReceivedPacketHandlerInterface getPacketHandler()

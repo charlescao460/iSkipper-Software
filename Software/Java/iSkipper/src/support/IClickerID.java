@@ -12,6 +12,7 @@ package support;
  */
 public class IClickerID implements Cloneable
 {
+	public static final int ID_HEX_STRING_LENGTH = 8;// iClicker ID could be represented as a string of 8 chars
 	private int ID;
 	private byte[] arrID;
 
@@ -129,7 +130,7 @@ public class IClickerID implements Cloneable
 	 */
 	public static boolean isValidID(byte[] arrID)
 	{
-		if (arrID.length < 4)
+		if (arrID.length != 4)
 			return false;
 		return ((arrID[0] ^ arrID[1] ^ arrID[2]) == arrID[3]);
 	}

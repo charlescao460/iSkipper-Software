@@ -44,6 +44,11 @@ void setup()
 			delay(1);
 		}
 	}
+	/*Respons Format:
+	*	Connection Established! iSkipper ID:\n
+	*	[ACK]\n
+	*	[ID]\n
+	*/
 	Serial.println(F("Connection Established! iSkipper ID:"));
 	Serial.println(RES_COMFIRM_CONNECTION);
 	char strID[9];
