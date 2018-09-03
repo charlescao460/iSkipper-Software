@@ -4,6 +4,7 @@
 package support;
 
 import java.util.HashMap;
+import java.util.Hashtable;
 
 /**
  * Utility class to storage Answer Packets in a HashMap. Since each of the
@@ -18,9 +19,17 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	private static final int INITIAL_PACKET_HASHMAP_SIZE = 256;
 	private static final float INITIAL_PACKET_HASHMAP_LOADFACTOR = 0.80f;
 
+	private Hashtable<Answer, Integer> answerCounter;
+
 	public AnswerPacketHashMap()
 	{
 		super(INITIAL_PACKET_HASHMAP_SIZE, INITIAL_PACKET_HASHMAP_LOADFACTOR);
+		Answer[] answers = Answer.values();
+		answerCounter = new Hashtable<>(answers.length);
+		for (Answer a : answers)
+		{
+			answerCounter.put(a, 0);
+		}
 	}
 
 	/**
@@ -32,6 +41,7 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	 */
 	public Answer put(AnswerPacket answerPacket)
 	{
+		answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
 		return super.put(answerPacket.hashCode(), answerPacket.getAnswer());
 	}
 
@@ -46,6 +56,15 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	public Answer get(Integer ID)
 	{
 		return super.get(ID);
+	}
+
+	/**
+	 * @param answer
+	 * @return the count of the input answer
+	 */
+	public int getAnswerCount(Answer answer)
+	{
+		return answerCounter.get(answer);
 	}
 
 }

@@ -32,4 +32,13 @@ public enum Answer
 		return Answer.valueOf(String.valueOf(answer).toUpperCase());
 	}
 
+	/**
+	 * @param answer
+	 * @return the capital char of this answer.
+	 */
+	public static char answerChar(Answer answer)
+	{
+		return answer.toString().charAt(0);
+	}
+
 }

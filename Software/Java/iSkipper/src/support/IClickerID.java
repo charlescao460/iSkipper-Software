@@ -145,4 +145,13 @@ public class IClickerID implements Cloneable
 		exception.printStackTrace();
 	}
 
+	/**
+	 * Return the string of the ID.
+	 */
+	@Override
+	public String toString()
+	{
+		return String.format("%02X%02X%02X%02X", arrID[0], arrID[1], arrID[2], arrID[3]);
+	}
+
 }

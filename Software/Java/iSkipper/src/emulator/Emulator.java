@@ -15,7 +15,7 @@ import support.Transcoding;
  */
 public class Emulator
 {
-	private int SERIAL_WAIT_TIME = 1000;
+	private static final int SERIAL_WAIT_TIME = 100;
 	private SerialAdapter serial;
 	private EmulatorModes mode;
 	private ReceivedPacketHandlerInterface handler;
@@ -47,13 +47,14 @@ public class Emulator
 		serial.writeByte(SerialSymbols.OP_COMFIRM_CONNECTION);// Send command
 		serial.setPacketHandler((event) ->
 		{
+			// This packet handler are called in another thread.
 			String resopnse = Transcoding.bytesToString(event.getReceivedData());
 			System.out.print(resopnse);
 			if (mode == EmulatorModes.STANDBY)
 				return;
 			try
 			{
-				// There should be one line contains the ID
+				// There should be one line contains the fixed ID
 				int id = Integer.parseUnsignedInt(resopnse.substring(0, IClickerID.ID_HEX_STRING_LENGTH), 16);
 				if (IClickerID.isValidID(id))
 				{
@@ -65,7 +66,7 @@ public class Emulator
 				// keep going
 			}
 		});
-		wait(SERIAL_WAIT_TIME);
+		wait(SERIAL_WAIT_TIME);// Wait for above process in another thread.
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.STANDBY;
 	}
@@ -145,28 +146,6 @@ public class Emulator
 		{
 			// keep going
 		}
-	}
-
-	@SuppressWarnings("unused")
-	private static final class SerialSymbols
-	{
-		/* Input Command Operation for Arduino */
-		public static final byte OP_COMFIRM_CONNECTION = 0x49;// 'I'
-		public static final byte OP_INVALID_OPERATION = 0x15;// ASCII NAK
-		public static final byte OP_STOP = 0x73;// 's'
-		public static final byte OP_RESET = 0x52;// 'R'
-		public static final byte OP_CHANGE_CHANNEL = 0x63;// 'c'
-		public static final byte OP_CAPTURE = 0x43;// 'C'
-		public static final byte OP_SUBMIT = 0x53;// 'S'
-		public static final byte OP_ATTACK = 0x41;// 'A'
-		public static final byte OP_ANSWER = 0x61;// 'a'
-
-		/* Output respons from Arduino */
-		public static final byte RES_COMFIRM_CONNECTION = 0x06;// ASCII ACK
-		public static final byte RES_INVALID_OPERATION = 0x15;
-		public static final byte RES_SUCCESS = 0x06;// ACK
-		public static final byte RES_FAIL = (byte) 0xFF;
-		public static final byte RES_TIMEOUT = (byte) 0xFE;
 	}
 
 }
