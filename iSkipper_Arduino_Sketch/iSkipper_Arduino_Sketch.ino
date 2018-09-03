@@ -20,6 +20,7 @@
 
 char serialBuffer[SERIAL_BUFFER_SIZE];
 char operationArguments[ARGUMENTS_SIZE];
+char replaceAnswer = 'A';
 uint8_t serialReadLength = 0;
 
 iClickerEmulator clicker(CSN, IRQ_PIN, digitalPinToInterrupt(IRQ_PIN), IS_RFM69HW);
@@ -66,7 +67,7 @@ void loop()
 	case OP_CAPTURE:
 	{
 		Serial.println(F("Start capture"));
-		clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+		clicker.startPromiscuous(CHANNEL_SEND, capturePacketHandler);
 		while (Serial.read() != OP_STOP)
 		{
 		}
@@ -155,9 +156,6 @@ void loop()
 	}
 	case OP_SUBMIT:
 	{
-		/*Command Format:
-		*	S,<Answer>,<ID>\0
-		*/
 		Serial.println(F("Start SUBMIT mode, waiting for input..."));
 
 		//loop for input answers and IDs
@@ -171,15 +169,15 @@ void loop()
 			{
 				continue;
 			}
-			char operationArguments[11];
-			Serial.readBytesUntil('\0', operationArguments, 11); //Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
-			operationArguments[10] = '\0';
-			if (operationArguments[0] == OP_STOP)
+			char answerAndID[11];
+			Serial.readBytesUntil('\0', answerAndID, 11); //Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
+			answerAndID[10] = '\0';
+			if (answerAndID[0] == OP_STOP)
 			{
 				break;
 			}
-			char cAns = operationArguments[0];
-			uint32_t iID = strtoul(&operationArguments[2], NULL, 16);
+			char cAns = answerAndID[0];
+			uint32_t iID = strtoul(&answerAndID[2], NULL, 16);
 			uint8_t arrID[4];
 			intToByteArray(iID, arrID);
 			//Serial.println(input);
@@ -196,6 +194,15 @@ void loop()
 			Serial.print('\0');
 		}
 		break;
+	}
+
+	case OP_REPLACE:
+	{
+		Serial.println(F("Start replace"));
+		replaceAnswer =  operationArguments[0];
+		clicker.startPromiscuous(CHANNEL_SEND, replacePacketHandler);
+		while (Serial.read() != OP_STOP){}
+		Serial.println(F("End replace"));
 	}
 
 	case OP_RESET:
@@ -235,7 +242,7 @@ char processSerialInput()
 		serialBuffer[serialReadLength] = '\0';
 		char cOperation = serialBuffer[0];
 		strlcpy(operationArguments, &serialBuffer[2], ARGUMENTS_SIZE);
-		Serial.println(F("Command received:"));
+/*		Serial.println(F("Command received:"));
 		//for (register uint16_t i = 0; i < SERIAL_BUFFER_SIZE; i++)
 		//{
 		//	Serial.print((byte)serialBuffer[i]);
@@ -246,7 +253,7 @@ char processSerialInput()
 		Serial.println(cOperation);
 		Serial.println(F("Arguments:"));
 		Serial.println(operationArguments);
-
+*/
 		return cOperation;
 	}
 	return OP_INVALID_OPERATION;
@@ -293,11 +300,19 @@ void intToByteArray(uint32_t input, uint8_t *output)
 	output[3] = input & 0xFF;
 }
 
-void recvPacketHandler(iClickerPacket_t *recvd)
+void capturePacketHandler(iClickerPacket_t *recvd)
 {
 	char strCaptureResponse[30];
 	uint8_t *id = recvd->packet.answerPacket.id;
 	char answer = iClickerEmulator::answerChar((iClickerAnswer_t)recvd->packet.answerPacket.answer);
-	snprintf(strCaptureResponse, sizeof(strCaptureResponse), "Captured,%c,%02X%02X%02X%02X,%ddBm\n", answer, id[0], id[1], id[2], id[3]);
+	snprintf(strCaptureResponse, sizeof(strCaptureResponse), "Captured,%c,%02X%02X%02X%02X\n", answer, id[0], id[1], id[2], id[3]);
 	Serial.print(strCaptureResponse);
+}
+
+void replacePacketHandler (iClickerPacket_t *recvd)
+{
+	capturePacketHandler(recvd);
+	clicker.submitAnswer(recvd->packet.answerPacket.id,clicker.charAnswer(replaceAnswer));
+	Serial.println("Replace success!");
+	clicker.startPromiscuous(CHANNEL_SEND, replacePacketHandler);
 }
