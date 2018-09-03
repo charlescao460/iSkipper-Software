@@ -18,3 +18,4 @@ const char RES_INVALID_OPERATION = 0x15;
 const char RES_SUCCESS = 0x06;//ACK
 const char RES_FAIL = 0xFF;
 const char RES_TIMEOUT = 0xFE;
+const char RES_STANDBY = 0x05;//ENQ

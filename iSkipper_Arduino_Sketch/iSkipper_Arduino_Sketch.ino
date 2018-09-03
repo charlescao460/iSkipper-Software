@@ -67,6 +67,7 @@ void loop()
 	case OP_CAPTURE:
 	{
 		Serial.println(F("Start capture"));
+		Serial.println(RES_SUCCESS);
 		clicker.startPromiscuous(CHANNEL_SEND, capturePacketHandler);
 		while (Serial.read() != OP_STOP)
 		{
@@ -212,6 +213,7 @@ void loop()
 	}
 	default:
 	{
+		Serial.println(RES_STANDBY);
 		Serial.println(F("No Running Progress, waiting for commands..."));
 		for (uint16_t wait = 3000; wait > 0; wait--)
 		{

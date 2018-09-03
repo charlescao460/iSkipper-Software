@@ -5,6 +5,7 @@ import java.util.Scanner;
 import device.SerialAdapter;
 import emulator.Emulator;
 import handler.PrintHandler;
+import support.AnswerPacketHashMap;
 
 public class Test
 {
@@ -41,7 +42,9 @@ public class Test
 
 		Emulator emulator = new Emulator(serial, new PrintHandler());
 		boolean initialized = emulator.initialize();
-		System.out.println(initialized);
+		System.out.println("Initialized: " + initialized);
+		boolean isInCapture = emulator.startCapture(new AnswerPacketHashMap());
+		System.out.println("Enter Capture Mode: " + isInCapture);
 		while (true)
 		{
 			scanner.nextLine();

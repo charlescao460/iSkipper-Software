@@ -17,10 +17,10 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 	/*
 	 * Output in capture mode:
 	 * 
-	 * <Answer>,<ID>\n
+	 * Captured,<Answer>,<ID>\n
 	 */
-	private static final int CAPTURE_ANSWER_INDEX = 0;
-	private static final int CAPTURE_ID_INDEX = 2;
+	private static final int CAPTURE_ANSWER_INDEX = 9;
+	private static final int CAPTURE_ID_INDEX = 11;
 
 	private AnswerPacketHashMap hashMap;
 
@@ -57,7 +57,7 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 		}
 		hashMap.put(packet);
 		System.out.print(response);
-		System.out.format("Current record: A:%d, B:&d, C:%d, D:%d, E:%d, Total:%d\n", hashMap.getAnswerCount(Answer.A),
+		System.out.format("Current record: A:%d, B:%d, C:%d, D:%d, E:%d, Total:%d\n", hashMap.getAnswerCount(Answer.A),
 				hashMap.getAnswerCount(Answer.B), hashMap.getAnswerCount(Answer.C), hashMap.getAnswerCount(Answer.D),
 				hashMap.getAnswerCount(Answer.E), hashMap.size());
 	}

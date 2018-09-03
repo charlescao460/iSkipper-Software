@@ -25,4 +25,5 @@ final class SerialSymbols
 	public static final byte RES_SUCCESS = 0x06;// ACK
 	public static final byte RES_FAIL = (byte) 0xFF;
 	public static final byte RES_TIMEOUT = (byte) 0xFE;
+	public static final byte RES_STANDBY = 0x05;// ENQ
 }

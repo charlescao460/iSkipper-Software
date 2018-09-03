@@ -4,7 +4,9 @@
 package emulator;
 
 import device.SerialAdapter;
+import handler.CaptureHandler;
 import handler.ReceivedPacketHandlerInterface;
+import support.AnswerPacketHashMap;
 import support.IClickerID;
 import support.Transcoding;
 
@@ -69,6 +71,30 @@ public class Emulator
 		wait(SERIAL_WAIT_TIME);// Wait for above process in another thread.
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.STANDBY;
+	}
+
+	public boolean startCapture(AnswerPacketHashMap storageHashMap)
+	{
+		if (mode != EmulatorModes.STANDBY)
+			return false;
+		serial.writeByte(SerialSymbols.OP_CAPTURE);
+		serial.setPacketHandler((event) ->
+		{
+			byte[] data = event.getReceivedData();
+			for (byte b : data)
+			{
+				if (b == SerialSymbols.RES_SUCCESS)
+				{
+					handler = new CaptureHandler(storageHashMap);
+					mode = EmulatorModes.CAPTURE;
+					return;
+				}
+			}
+			System.out.print(Transcoding.bytesToString(data));
+		});
+		wait(3000);
+		serial.setPacketHandler(handler);
+		return mode == EmulatorModes.CAPTURE;
 	}
 
 	/**
@@ -144,7 +170,7 @@ public class Emulator
 			Thread.sleep(millis);
 		} catch (InterruptedException e)
 		{
-			// keep going
+			e.printStackTrace();
 		}
 	}
 
