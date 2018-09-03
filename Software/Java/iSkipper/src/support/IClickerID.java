@@ -146,6 +146,25 @@ public class IClickerID implements Cloneable
 	}
 
 	/**
+	 * @param str
+	 *            the ID in a string, as an hex number.
+	 * @return the IClickerID. Null if the input cannot be parsed into a valid ID.
+	 */
+	public static IClickerID idFromString(String str)
+	{
+		try
+		{
+			int id = Integer.parseUnsignedInt(str, 16);
+			if (!isValidID(id))
+				return null;
+			return new IClickerID(id);
+		} catch (Exception e)
+		{
+			return null;
+		}
+	}
+
+	/**
 	 * Return the string of the ID.
 	 */
 	@Override

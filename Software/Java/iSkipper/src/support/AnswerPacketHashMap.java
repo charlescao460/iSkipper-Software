@@ -41,8 +41,14 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	 */
 	public Answer put(AnswerPacket answerPacket)
 	{
-		answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
-		return super.put(answerPacket.hashCode(), answerPacket.getAnswer());
+		Answer prevAnswer = super.put(answerPacket.hashCode(), answerPacket.getAnswer());
+		if (prevAnswer != null && prevAnswer != answerPacket.getAnswer())
+		{
+			answerCounter.put(prevAnswer, answerCounter.get(prevAnswer) - 1);
+			answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
+		} else if (prevAnswer == null)
+			answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
+		return prevAnswer;
 	}
 
 	/**

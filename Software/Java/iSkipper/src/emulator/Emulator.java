@@ -55,10 +55,10 @@ public class Emulator
 			try
 			{
 				// There should be one line contains the fixed ID
-				int id = Integer.parseUnsignedInt(resopnse.substring(0, IClickerID.ID_HEX_STRING_LENGTH), 16);
-				if (IClickerID.isValidID(id))
+				IClickerID id = IClickerID.idFromString(resopnse.substring(0, IClickerID.ID_HEX_STRING_LENGTH));
+				if (id != null)
 				{
-					emulatorID = new IClickerID(id);
+					emulatorID = id;
 					mode = EmulatorModes.STANDBY;
 				}
 			} catch (Exception e)
