@@ -43,7 +43,7 @@ public class Test
 		Emulator emulator = new Emulator(serial, new PrintHandler());
 		boolean initialized = emulator.initialize();
 		System.out.println("Initialized: " + initialized);
-		boolean isInCapture = emulator.startCapture(new AnswerPacketHashMap());
+		boolean isInCapture = emulator.startCapture(new AnswerPacketHashMap(), false, true);
 		System.out.println("Enter Capture Mode: " + isInCapture);
 		while (true)
 		{

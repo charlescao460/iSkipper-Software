@@ -23,9 +23,12 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 	private static final int CAPTURE_ID_INDEX = 11;
 
 	private AnswerPacketHashMap hashMap;
+	private boolean shouldPrintRaw;
+	private boolean shouldPrintStatis;
 
 	/**
-	 * The default constructor, use a new empty AnswerPacketHashMap
+	 * The default constructor, use a new empty AnswerPacketHashMap and print
+	 * everything.
 	 */
 	public CaptureHandler()
 	{
@@ -34,15 +37,21 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 
 	/**
 	 * @param hashMap
-	 * 
 	 *            Construct this handler with an existing AnswerPacketHashMap to
 	 *            continue recording.
+	 * @param shouldPrintRaw
+	 *            Whether print the raw data when receiving a response or not.
+	 * @param shouldPrintStatis
+	 *            Whether print the statistic of the answers when receiving a
+	 *            response or not.
 	 */
-	public CaptureHandler(AnswerPacketHashMap hashMap)
+	public CaptureHandler(AnswerPacketHashMap hashMap, boolean shouldPrintRaw, boolean shouldPrintStatis)
 	{
 		if (hashMap == null)
 			throw new NullPointerException();
 		this.hashMap = hashMap;
+		this.shouldPrintRaw = shouldPrintRaw;
+		this.shouldPrintStatis = shouldPrintStatis;
 	}
 
 	@Override
@@ -52,14 +61,18 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 		AnswerPacket packet = parseInput(response);
 		if (packet == null)
 		{
-			System.err.println("This capture is corrupted.");
+			if (shouldPrintRaw || shouldPrintStatis)
+				System.err.println("This capture is corrupted.");
 			return;
 		}
 		hashMap.put(packet);
-		System.out.print(response);
-		System.out.format("Current record: A:%d, B:%d, C:%d, D:%d, E:%d, Total:%d\n", hashMap.getAnswerCount(Answer.A),
-				hashMap.getAnswerCount(Answer.B), hashMap.getAnswerCount(Answer.C), hashMap.getAnswerCount(Answer.D),
-				hashMap.getAnswerCount(Answer.E), hashMap.size());
+		if (shouldPrintRaw)
+			System.out.print(response);
+		if (shouldPrintStatis)
+			System.out.format("Current record: A:%d, B:%d, C:%d, D:%d, E:%d, IDCount:%d, PacketCount:%d\n",
+					hashMap.getAnswerCount(Answer.A), hashMap.getAnswerCount(Answer.B),
+					hashMap.getAnswerCount(Answer.C), hashMap.getAnswerCount(Answer.D),
+					hashMap.getAnswerCount(Answer.E), hashMap.getNumsTotalIDs(), hashMap.getNumsTotalPacketRecieved());
 	}
 
 	/**

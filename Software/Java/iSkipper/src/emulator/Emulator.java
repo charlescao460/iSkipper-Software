@@ -73,7 +73,21 @@ public class Emulator
 		return mode == EmulatorModes.STANDBY;
 	}
 
-	public boolean startCapture(AnswerPacketHashMap storageHashMap)
+	/**
+	 * Start the capturing mode. Must be STANDBY mode to start capturing.
+	 * 
+	 * @param storageHashMap
+	 *            the HashMap to storage captured answers.
+	 * @param shouldPrintRaw
+	 *            Whether print the raw data when receiving a response or not.
+	 * @param shouldPrintStatis
+	 *            Whether print the statistic of the answers when receiving a
+	 *            response or not.
+	 * @return Whether successfully switch to Capturing mode.
+	 * 
+	 * @see CaptureHandler#CaptureHandler(AnswerPacketHashMap, boolean, boolean);
+	 */
+	public boolean startCapture(AnswerPacketHashMap storageHashMap, boolean shouldPrintRaw, boolean shouldPrintStatis)
 	{
 		if (mode != EmulatorModes.STANDBY)
 			return false;
@@ -83,7 +97,7 @@ public class Emulator
 
 			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
 			{
-				handler = new CaptureHandler(storageHashMap);
+				handler = new CaptureHandler(storageHashMap, shouldPrintRaw, shouldPrintStatis);
 				mode = EmulatorModes.CAPTURE;
 				wakeEmulator();
 				return;
