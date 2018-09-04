@@ -8,7 +8,6 @@ import handler.CaptureHandler;
 import handler.ReceivedPacketHandlerInterface;
 import support.AnswerPacketHashMap;
 import support.IClickerID;
-import support.Transcoding;
 
 /**
  * @author CSR
@@ -17,10 +16,10 @@ import support.Transcoding;
  */
 public class Emulator
 {
-	private static final int SERIAL_WAIT_TIME = 100;
+	private static final int SERIAL_WAIT_TIME = 5000;
 	private SerialAdapter serial;
-	private EmulatorModes mode;
-	private ReceivedPacketHandlerInterface handler;
+	private volatile EmulatorModes mode;
+	private volatile ReceivedPacketHandlerInterface handler;
 	private IClickerID emulatorID;
 
 	public Emulator(SerialAdapter serialPort, ReceivedPacketHandlerInterface handler)
@@ -47,28 +46,29 @@ public class Emulator
 		if (mode != EmulatorModes.DISCONNECTED)
 			return false;
 		serial.writeByte(SerialSymbols.OP_COMFIRM_CONNECTION);// Send command
-		serial.setPacketHandler((event) ->
+		serial.setPacketHandler((packet) ->
 		{
 			// This packet handler are called in another thread.
-			String resopnse = Transcoding.bytesToString(event.getReceivedData());
-			System.out.print(resopnse);
+			System.out.print(packet);
 			if (mode == EmulatorModes.STANDBY)
 				return;
 			try
 			{
 				// There should be one line contains the fixed ID
-				IClickerID id = IClickerID.idFromString(resopnse.substring(0, IClickerID.ID_HEX_STRING_LENGTH));
+				IClickerID id = IClickerID
+						.idFromString(packet.toString().substring(0, IClickerID.ID_HEX_STRING_LENGTH));
 				if (id != null)
 				{
 					emulatorID = id;
 					mode = EmulatorModes.STANDBY;
+					wakeEmulator();
 				}
 			} catch (Exception e)
 			{
 				// keep going
 			}
 		});
-		wait(SERIAL_WAIT_TIME);// Wait for above process in another thread.
+		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.STANDBY;
 	}
@@ -78,21 +78,19 @@ public class Emulator
 		if (mode != EmulatorModes.STANDBY)
 			return false;
 		serial.writeByte(SerialSymbols.OP_CAPTURE);
-		serial.setPacketHandler((event) ->
+		serial.setPacketHandler((packet) ->
 		{
-			byte[] data = event.getReceivedData();
-			for (byte b : data)
+
+			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
 			{
-				if (b == SerialSymbols.RES_SUCCESS)
-				{
-					handler = new CaptureHandler(storageHashMap);
-					mode = EmulatorModes.CAPTURE;
-					return;
-				}
+				handler = new CaptureHandler(storageHashMap);
+				mode = EmulatorModes.CAPTURE;
+				wakeEmulator();
+				return;
 			}
-			System.out.print(Transcoding.bytesToString(data));
+			System.out.print(packet);
 		});
-		wait(3000);
+		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.CAPTURE;
 	}
@@ -157,21 +155,25 @@ public class Emulator
 	}
 
 	/**
-	 * The internal function to suspend the current thread to wait for serial
-	 * response.
-	 * 
-	 * @param millis
-	 *            time to wait.
+	 * Used to suspend the current thread to wait for handler to done its process.
 	 */
-	private void wait(int millis)
+	private synchronized void waitForHandler()
 	{
 		try
 		{
-			Thread.sleep(millis);
+			this.wait(SERIAL_WAIT_TIME);
 		} catch (InterruptedException e)
 		{
-			e.printStackTrace();
+			Thread.currentThread().interrupt();
 		}
+	}
+
+	/**
+	 * Used in handler class when it finished its job and resume the thread.
+	 */
+	private synchronized void wakeEmulator()
+	{
+		this.notifyAll();
 	}
 
 }
