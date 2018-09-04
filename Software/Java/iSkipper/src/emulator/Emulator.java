@@ -5,6 +5,7 @@ package emulator;
 
 import device.SerialAdapter;
 import handler.CaptureHandler;
+import handler.PrintHandler;
 import handler.ReceivedPacketHandlerInterface;
 import support.AnswerPacketHashMap;
 import support.IClickerID;
@@ -50,7 +51,7 @@ public class Emulator
 		{
 			// This packet handler are called in another thread.
 			System.out.print(packet);
-			if (mode == EmulatorModes.STANDBY)
+			if (mode.equals(EmulatorModes.STANDBY))
 				return;
 			try
 			{
@@ -107,6 +108,35 @@ public class Emulator
 		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.CAPTURE;
+	}
+
+	/**
+	 * Stop the current mode and change to STANDBY mode. It would return true if it
+	 * was already in STANDBY mode.
+	 * 
+	 * @return Whether successfully stop current mode and switch to STANDBY mode.
+	 */
+	public boolean stopAndGoStandby()
+	{
+		if (mode == EmulatorModes.STANDBY)
+			return true;
+		else if (mode == EmulatorModes.DISCONNECTED)
+			return false;
+		serial.writeByte(SerialSymbols.OP_STOP);
+		serial.setPacketHandler((packet) ->
+		{
+			if (packet.dataContains(SerialSymbols.RES_STANDBY))
+			{
+				handler = new PrintHandler();
+				mode = EmulatorModes.STANDBY;
+				wakeEmulator();
+				return;
+			}
+			System.out.print(packet);
+		});
+		waitForHandler();
+		serial.setPacketHandler(handler);
+		return mode == EmulatorModes.STANDBY;
 	}
 
 	/**

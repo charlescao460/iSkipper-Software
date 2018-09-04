@@ -69,7 +69,7 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 		if (shouldPrintRaw)
 			System.out.print(response);
 		if (shouldPrintStatis)
-			System.out.format("Current record: A:%d, B:%d, C:%d, D:%d, E:%d, IDCount:%d, PacketCount:%d\n",
+			System.out.format("Current record: A:%d, B:%d, C:%d, D:%d, E:%d, CountIDs:%d, CountPackets:%d\n",
 					hashMap.getAnswerCount(Answer.A), hashMap.getAnswerCount(Answer.B),
 					hashMap.getAnswerCount(Answer.C), hashMap.getAnswerCount(Answer.D),
 					hashMap.getAnswerCount(Answer.E), hashMap.getNumsTotalIDs(), hashMap.getNumsTotalPacketRecieved());

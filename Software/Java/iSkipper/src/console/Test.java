@@ -47,8 +47,16 @@ public class Test
 		System.out.println("Enter Capture Mode: " + isInCapture);
 		while (true)
 		{
-			scanner.nextLine();
+			String input = scanner.nextLine();
+			if (input.contains("s"))
+			{
+				emulator.stopAndGoStandby();
+				System.out.println("Current mode: " + emulator.getMode());
+			} else if (input.contains("C"))
+			{
+				emulator.startCapture(new AnswerPacketHashMap(), false, true);
+				System.out.println("Current mode: " + emulator.getMode());
+			}
 		}
 	}
-
 }
