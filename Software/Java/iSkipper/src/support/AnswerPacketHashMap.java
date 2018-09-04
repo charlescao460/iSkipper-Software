@@ -46,14 +46,23 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	{
 		if (answerPacket == null)
 			throw new NullPointerException("Cannot put a null packet into the HashMap.");
+		numsTotalPacketRecieved++;
+		if (answerPacket.getAnswer().equals(Answer.P))
+		{
+			Answer prev = get(answerPacket.hashCode());
+			if (prev == null)
+				super.put(answerPacket.hashCode(), null);
+			return prev;
+		}
 		Answer prevAnswer = super.put(answerPacket.hashCode(), answerPacket.getAnswer());
-		if (prevAnswer != null && prevAnswer != answerPacket.getAnswer())
+		if (prevAnswer != null && prevAnswer != answerPacket.getAnswer())// if different answer
 		{
 			answerCounter.put(prevAnswer, answerCounter.get(prevAnswer) - 1);
 			answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
-		} else if (prevAnswer == null)
+		} else if (prevAnswer == null)// if new ID
+		{
 			answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
-		numsTotalPacketRecieved++;
+		}
 		return prevAnswer;
 	}
 
