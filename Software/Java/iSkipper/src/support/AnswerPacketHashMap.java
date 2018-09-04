@@ -20,6 +20,7 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	private static final float INITIAL_PACKET_HASHMAP_LOADFACTOR = 0.80f;
 
 	private Hashtable<Answer, Integer> answerCounter;
+	private int numsTotalPacketRecieved;
 
 	public AnswerPacketHashMap()
 	{
@@ -34,13 +35,17 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 
 	/**
 	 * @param answerPacket
-	 *            the AnswerPacket to put into this HashMap
+	 *            the AnswerPacket to put into this HashMap.
 	 * @return the previous answer of the ID of this packet (null if the ID is newly
 	 *         added).
+	 * @throws NullPointerException
+	 *             if the answerPacket is null.
 	 * @see java.util.HashMap#put(Object, Object)
 	 */
 	public Answer put(AnswerPacket answerPacket)
 	{
+		if (answerPacket == null)
+			throw new NullPointerException("Cannot put a null packet into the HashMap.");
 		Answer prevAnswer = super.put(answerPacket.hashCode(), answerPacket.getAnswer());
 		if (prevAnswer != null && prevAnswer != answerPacket.getAnswer())
 		{
@@ -48,6 +53,7 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 			answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
 		} else if (prevAnswer == null)
 			answerCounter.put(answerPacket.getAnswer(), answerCounter.get(answerPacket.getAnswer()) + 1);
+		numsTotalPacketRecieved++;
 		return prevAnswer;
 	}
 
@@ -71,6 +77,24 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	public int getAnswerCount(Answer answer)
 	{
 		return answerCounter.get(answer);
+	}
+
+	/**
+	 * @return the total number of the packet that have been received in this
+	 *         HashMap.
+	 */
+	public int getNumsTotalPacketRecieved()
+	{
+		return numsTotalPacketRecieved;
+	}
+
+	/**
+	 * @return the total number of IDs in this HashMap, which could also indicate
+	 *         the total number of the people in the class.
+	 */
+	public int getNumsTotalIDs()
+	{
+		return this.size();
 	}
 
 }
