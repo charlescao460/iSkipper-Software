@@ -24,10 +24,6 @@ import handler.ReceivedPacketHandlerInterface;
  *
  */
 
-// Thread.suspend() and Thread.resume() are deprecated. But, because the Thread
-// eventSender wouldn't invoke any synchronized method, we could believe
-// that the dead-lock wouldn't happen and we can use these deprecated methods.
-@SuppressWarnings("deprecation")
 public class SerialListener implements SerialPortDataListener
 {
 
@@ -57,7 +53,17 @@ public class SerialListener implements SerialPortDataListener
 					{
 						packetHandler.onReceivedPacketEvent(unhandledPackets.poll());
 					}
-					eventSender.suspend();
+					synchronized (this)
+					{
+						try
+						{
+							this.wait();
+						} catch (InterruptedException e)
+						{
+							currentThread().interrupt();
+						}
+					}
+
 				}
 			}
 		};
@@ -104,7 +110,10 @@ public class SerialListener implements SerialPortDataListener
 				}
 				numBytesReceived = 0;
 				unhandledPackets.offer(new ReceivedPacketEvent(this, packet));
-				eventSender.resume();
+				synchronized (eventSender)
+				{
+					eventSender.notifyAll();
+				}
 			}
 		}
 	}
