@@ -147,6 +147,7 @@ void loop()
 		}
 		else
 		{
+			Serial.println(RES_SUCCESS);
 			Serial.print(F("Successfully change channel to: "));
 			Serial.print(operationArguments[0]);
 			Serial.print(operationArguments[1]);

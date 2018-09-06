@@ -8,7 +8,9 @@ import handler.CaptureHandler;
 import handler.PrintHandler;
 import handler.ReceivedPacketHandlerInterface;
 import support.AnswerPacketHashMap;
+import support.IClickerChannel;
 import support.IClickerID;
+import support.Transcoding;
 
 /**
  * @author CSR
@@ -22,18 +24,17 @@ public class Emulator
 	private volatile EmulatorModes mode;
 	private volatile ReceivedPacketHandlerInterface handler;
 	private IClickerID emulatorID;
+	private volatile IClickerChannel emulatorChannel;
 
-	public Emulator(SerialAdapter serialPort, ReceivedPacketHandlerInterface handler)
+	public Emulator(SerialAdapter serialPort)
 	{
 		if (serialPort == null)
 			throw new NullPointerException("Serial port object is null when constructing an Emulator object.\n");
 		if (!serialPort.isAvailable())
 			throw new IllegalArgumentException("Serial port is not available when constructing an Emulator object.\\n");
-		if (handler == null)
-			throw new NullPointerException("A handler is null when constructing an Emulator object.\n");
 		this.serial = serialPort;
 		this.mode = EmulatorModes.DISCONNECTED;
-		this.handler = handler;
+		this.handler = new PrintHandler();
 		this.emulatorID = new IClickerID();
 	}
 
@@ -62,6 +63,7 @@ public class Emulator
 				{
 					emulatorID = id;
 					mode = EmulatorModes.STANDBY;
+					emulatorChannel = IClickerChannel.AA;// Default AA channel in Arduino Sketch.
 					wakeEmulator();
 				}
 			} catch (Exception e)
@@ -139,6 +141,28 @@ public class Emulator
 		return mode == EmulatorModes.STANDBY;
 	}
 
+	public boolean changeChannel(IClickerChannel channel)
+	{
+		if (mode != EmulatorModes.STANDBY)
+			return false;
+		if (channel == null)
+			throw new NullPointerException("Null channel when changing channel.");
+		String toSend = (char) SerialSymbols.OP_CHANGE_CHANNEL + "," + channel.toString();
+		serial.writeBytes(Transcoding.stringToBytes(toSend));
+		serial.setPacketHandler((packet) ->
+		{
+			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
+			{
+				emulatorChannel = channel;
+				wakeEmulator();
+				return;
+			}
+		});
+		waitForHandler();
+		serial.setPacketHandler(handler);
+		return emulatorChannel == channel;
+	}
+
 	/**
 	 * @return the serial adapter
 	 */
@@ -182,20 +206,19 @@ public class Emulator
 	}
 
 	/**
-	 * @param handler
-	 *            the serial packet handler to set
-	 */
-	public void setHandler(ReceivedPacketHandlerInterface handler)
-	{
-		this.handler = handler;
-	}
-
-	/**
 	 * @return the fixed iClickerID of this emulator from the hardware.
 	 */
 	public IClickerID getEmulatorID()
 	{
 		return emulatorID;
+	}
+
+	/**
+	 * @return the current channel that being used by this emulator.
+	 */
+	public IClickerChannel getEmulatorChannel()
+	{
+		return emulatorChannel;
 	}
 
 	/**
