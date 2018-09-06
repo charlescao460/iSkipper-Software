@@ -6,6 +6,7 @@ import device.SerialAdapter;
 import emulator.Emulator;
 import emulator.EmulatorModes;
 import handler.PrintHandler;
+import support.Answer;
 import support.AnswerPacketHashMap;
 import support.IClickerChannel;
 
@@ -46,6 +47,9 @@ public class Test
 				break;
 			case "s":
 				emulator.stopAndGoStandby();
+				break;
+			case "A":
+				answerTheQuestion(emulator, scanner);
 				break;
 			case "exit":
 				break outLoop;
@@ -125,6 +129,24 @@ public class Test
 			System.out.println("Successfully change to " + input + ".");
 		else
 			System.out.println("Fail.");
+	}
+
+	private static void answerTheQuestion(Emulator emulator, Scanner scanner)
+	{
+		if (emulator.getMode() != EmulatorModes.STANDBY)
+			return;
+		System.out.println("Please key in your answer:");
+		String input = scanner.next();
+		try
+		{
+			emulator.submitAnswer(Answer.valueOf(input));
+		} catch (Exception e)
+		{
+			System.out.println("Illegal input!");
+			return;
+		}
+		System.out.println("Submit done!");
+
 	}
 
 }

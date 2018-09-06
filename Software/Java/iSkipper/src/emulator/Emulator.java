@@ -7,6 +7,7 @@ import device.SerialAdapter;
 import handler.CaptureHandler;
 import handler.PrintHandler;
 import handler.ReceivedPacketHandlerInterface;
+import support.Answer;
 import support.AnswerPacketHashMap;
 import support.IClickerChannel;
 import support.IClickerID;
@@ -23,7 +24,7 @@ public class Emulator
 	private SerialAdapter serial;
 	private volatile EmulatorModes mode;
 	private volatile ReceivedPacketHandlerInterface handler;
-	private IClickerID emulatorID;
+	private volatile IClickerID emulatorID;
 	private volatile IClickerChannel emulatorChannel;
 
 	public Emulator(SerialAdapter serialPort)
@@ -31,11 +32,10 @@ public class Emulator
 		if (serialPort == null)
 			throw new NullPointerException("Serial port object is null when constructing an Emulator object.\n");
 		if (!serialPort.isAvailable())
-			throw new IllegalArgumentException("Serial port is not available when constructing an Emulator object.\\n");
+			throw new IllegalArgumentException("Serial port is not available when constructing an Emulator object.\n");
 		this.serial = serialPort;
 		this.mode = EmulatorModes.DISCONNECTED;
 		this.handler = new PrintHandler();
-		this.emulatorID = new IClickerID();
 	}
 
 	/**
@@ -141,6 +141,11 @@ public class Emulator
 		return mode == EmulatorModes.STANDBY;
 	}
 
+	/**
+	 * @param channel
+	 *            The target channel to change to.
+	 * @return Whether successfully change to the desired channel.
+	 */
 	public boolean changeChannel(IClickerChannel channel)
 	{
 		if (mode != EmulatorModes.STANDBY)
@@ -158,9 +163,42 @@ public class Emulator
 				return;
 			}
 		});
+		mode = EmulatorModes.BUSY;
 		waitForHandler();
+		mode = EmulatorModes.STANDBY;
 		serial.setPacketHandler(handler);
 		return emulatorChannel == channel;
+	}
+
+	/**
+	 * Submitting answer with the fixed ID of this emulator.
+	 * 
+	 * @param answer
+	 *            The answer
+	 * @return Whether successfully submitted.
+	 */
+	public boolean submitAnswer(Answer answer)
+	{
+		if (mode != EmulatorModes.STANDBY)
+			return false;
+		if (answer == null)
+			throw new NullPointerException("Null answer when submitting an answer.");
+		String toSend = (char) SerialSymbols.OP_ANSWER + "," + answer.toString();
+		serial.writeBytes(Transcoding.stringToBytes(toSend));
+		serial.setPacketHandler((packet) ->
+		{
+			if (packet.dataContains(SerialSymbols.RES_STANDBY))
+			{
+				wakeEmulator();
+				return;
+			}
+			System.out.print(packet);
+		});
+		mode = EmulatorModes.BUSY;
+		waitForHandler();
+		mode = EmulatorModes.STANDBY;
+		serial.setPacketHandler(handler);
+		return true;
 	}
 
 	/**
