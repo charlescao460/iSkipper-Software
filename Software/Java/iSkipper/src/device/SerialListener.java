@@ -101,7 +101,7 @@ public class SerialListener implements SerialPortDataListener
 		{
 			recieveBuffer.offer(b);
 			numBytesReceived++;
-			if (b == '\n' || b == '\0')
+			if (b == '\0' || b == '\n')
 			{
 				byte[] packet = new byte[numBytesReceived];
 				for (int i = 0; i < numBytesReceived; i++)

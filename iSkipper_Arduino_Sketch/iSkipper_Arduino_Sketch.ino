@@ -204,6 +204,7 @@ void loop()
 		replaceAnswer =  operationArguments[0];
 		clicker.startPromiscuous(CHANNEL_SEND, replacePacketHandler);
 		while (Serial.read() != OP_STOP){}
+		clicker.stopPromiscuous();
 		Serial.println(F("End replace"));
 	}
 
@@ -315,6 +316,7 @@ void capturePacketHandler(iClickerPacket_t *recvd)
 void replacePacketHandler (iClickerPacket_t *recvd)
 {
 	capturePacketHandler(recvd);
+	clicker.stopPromiscuous();
 	clicker.submitAnswer(recvd->packet.answerPacket.id,clicker.charAnswer(replaceAnswer));
 	Serial.println("Replace success!");
 	clicker.startPromiscuous(CHANNEL_SEND, replacePacketHandler);
