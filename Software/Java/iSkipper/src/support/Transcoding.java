@@ -62,7 +62,8 @@ public final class Transcoding
 	public static byte[] intToByteArray(int input)
 	{
 		return new byte[]
-		{ (byte) (input >> 24 & 0xFF), (byte) (input >> 16 & 0xFF), (byte) (input >> 8 & 0xFF), (byte) (input & 0xFF) };
+		{ (byte) (input >>> 24 & 0xFF), (byte) (input >>> 16 & 0xFF), (byte) (input >>> 8 & 0xFF),
+				(byte) (input & 0xFF) };
 	}
 
 	/**
