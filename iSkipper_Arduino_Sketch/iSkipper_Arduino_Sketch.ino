@@ -83,7 +83,7 @@ void loop()
 		*	A,<Answer>,<Counts>/0
 		*/
 		Serial.println(F("Start Attack"));
-
+		Serial.println(RES_SUCCESS);
 		//parsing arguments
 		char cAns = operationArguments[0];
 		unsigned long iAttackCount = strtoul(&operationArguments[2], NULL, 10);

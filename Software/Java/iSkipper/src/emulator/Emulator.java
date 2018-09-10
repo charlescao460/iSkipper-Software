@@ -4,6 +4,7 @@
 package emulator;
 
 import device.SerialAdapter;
+import handler.AttackHandler;
 import handler.CaptureHandler;
 import handler.PrintHandler;
 import handler.ReceivedPacketHandlerInterface;
@@ -199,6 +200,41 @@ public class Emulator
 		mode = EmulatorModes.STANDBY;
 		serial.setPacketHandler(handler);
 		return true;
+	}
+
+	/**
+	 * @param answer
+	 *            The answer to submit repeatedly. Random answer if NULL.
+	 * @param count
+	 *            How many time you want to submit
+	 * @param handler
+	 *            The AttackHandler to handle the response from the device during
+	 *            attacking.
+	 * @return Whether successfully start attacking.
+	 */
+	public boolean startAttack(Answer answer, long count, AttackHandler handler)
+	{
+		if (mode != EmulatorModes.STANDBY)
+			return false;
+		if (count < 0)
+			throw new IllegalArgumentException("Count cannot be negative when attacking.");
+		if (handler == null)
+			throw new NullPointerException("Null handler when start attack.");
+		String strAns = answer == null ? "R" : answer.toString();
+		String toSend = (char) SerialSymbols.OP_ATTACK + "," + strAns + "," + String.valueOf(count);
+		serial.writeBytes(Transcoding.stringToBytes(toSend));
+		serial.setPacketHandler((packet) ->
+		{
+			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
+			{
+				mode = EmulatorModes.ATTACK;
+				wakeEmulator();
+				return;
+			}
+		});
+		waitForHandler();
+		serial.setPacketHandler(handler);
+		return mode == EmulatorModes.ATTACK;
 	}
 
 	/**

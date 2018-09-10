@@ -5,6 +5,7 @@ import java.util.Scanner;
 import device.SerialAdapter;
 import emulator.Emulator;
 import emulator.EmulatorModes;
+import handler.AttackHandler;
 import handler.PrintHandler;
 import support.Answer;
 import support.AnswerPacketHashMap;
@@ -34,7 +35,7 @@ public class Test
 				PrintHandler handler = (PrintHandler) emulator.getHandler();
 				handler.stopPrint();
 				System.out.println(
-						"\nWhat do you want to do?\n1. (C)apture\n2. (CC)Change Channel\n3. (A)nswer\nOr input \"exit\" to exit.");
+						"\nWhat do you want to do?\n1. (C)apture\n2. (CC)Change Channel\n3. (A)nswer\n4. (AT)tack\nOr input \"exit\" to exit.");
 			}
 			String input = scanner.next();
 			switch (input)
@@ -51,6 +52,9 @@ public class Test
 			case "A":
 				answerTheQuestion(emulator, scanner);
 				break;
+			case "AT":
+				startAttack(emulator, scanner);
+				break;
 			case "exit":
 				break outLoop;
 			default:
@@ -58,6 +62,22 @@ public class Test
 			}
 		}
 		scanner.close();
+	}
+
+	public static void startAttack(Emulator emulator, Scanner scanner)
+	{
+		System.out.println("Which answer do you want to attack?(A,B,C,D,E,or R for random.)");
+		String strAnswer = scanner.next();
+		Answer answer = Answer.P;
+		try
+		{
+			answer = Answer.charAnswer(strAnswer.charAt(0));
+		} catch (Exception e)
+		{
+		}
+		System.out.println("How many times would you like to submit?");
+		long count = scanner.nextLong();
+		emulator.startAttack(answer == Answer.P ? null : answer, count, new AttackHandler(true));
 	}
 
 	public static SerialAdapter askForSerialPort(Scanner scanner) throws InterruptedException

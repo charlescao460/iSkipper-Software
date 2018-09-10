@@ -38,7 +38,7 @@ public class AttackHandler implements ReceivedPacketHandlerInterface
 		}
 		attackCount += count;
 		if (shouldPrintStatis)
-			System.out.format("Attack count: %d", attackCount);
+			System.out.format("Attack count: %d\n", attackCount);
 	}
 
 }
