@@ -255,6 +255,14 @@ public class Emulator
 	}
 
 	/**
+	 * @return Whether the emulator is ready to use.
+	 */
+	public boolean isAvailable()
+	{
+		return mode == EmulatorModes.STANDBY;
+	}
+
+	/**
 	 * @return the mode
 	 */
 	public EmulatorModes getMode()

@@ -11,11 +11,8 @@ import support.Answer;
 import support.AnswerPacketHashMap;
 import support.IClickerChannel;
 
-public class Test
+public class ISkipperConsole
 {
-
-	private static final int SERIAL_OPEN_WAIT_TIME = 1500;
-
 	public static void main(String[] args) throws InterruptedException
 	{
 		Scanner scanner = new Scanner(System.in);
@@ -106,7 +103,7 @@ public class Test
 		{
 			System.err.println("Cannot open this port!");
 		}
-		Thread.sleep(SERIAL_OPEN_WAIT_TIME);
+
 		return serial;
 	}
 

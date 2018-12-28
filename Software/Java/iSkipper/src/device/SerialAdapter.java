@@ -18,6 +18,7 @@ import handler.ReceivedPacketHandlerInterface;
  */
 public class SerialAdapter
 {
+	private final static int OPEN_SERIAL_WAIT_TIME = 1500;
 	private final static int WRITE_TIMEOUT = 10_000;
 	private final static int READ_TIMEOUT = 10_000;
 	/* 115200,8,1,N for Arduino's port */
@@ -84,6 +85,20 @@ public class SerialAdapter
 	}
 
 	/**
+	 * Close the selected port.
+	 * 
+	 * @return Whether successfully close the port.
+	 */
+	public boolean close()
+	{
+		if (serialPort != null)
+		{
+			return serialPort.closePort();
+		}
+		return false;
+	}
+
+	/**
 	 * @param toWrite
 	 *            send data to this serial port
 	 */
@@ -136,5 +151,15 @@ public class SerialAdapter
 				/* StopBits */SERIAL_PORT_STOP_BITS, /* Parity */SERIAL_PORT_PARITY);
 		serialPort.setComPortTimeouts(SerialPort.TIMEOUT_NONBLOCKING, READ_TIMEOUT, WRITE_TIMEOUT);
 		serialPort.addDataListener(listener);
+		try
+		{
+			// Must wait for a while after the port was opened.
+			// It is weird but I can't fix it.
+			// The jSerialComm's documents wasn't helpful for this problem.
+			Thread.sleep(OPEN_SERIAL_WAIT_TIME);
+		} catch (InterruptedException e)
+		{
+			Thread.currentThread().interrupt();
+		}
 	}
 }
