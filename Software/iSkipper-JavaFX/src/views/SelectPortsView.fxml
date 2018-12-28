@@ -1,22 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
-<?import com.jfoenix.controls.JFXClippedPane?>
 <?import com.jfoenix.controls.JFXComboBox?>
 <?import com.jfoenix.controls.JFXSpinner?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="153.0" prefWidth="325.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" prefHeight="153.0" prefWidth="325.0" style="-fx-background-color: #FFFFFF; -fx-border-color: #FFFFFF;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.SelectPortsViewController">
    <children>
       <Label layoutX="14.0" layoutY="14.0" prefHeight="15.0" prefWidth="305.0" text="Please select the COM port of the iSkipper's board:" />
       <Label layoutX="15.0" layoutY="48.0" prefHeight="15.0" prefWidth="37.0" text="COM:" />
-      <JFXSpinner layoutX="284.0" layoutY="46.0" prefHeight="23.0" prefWidth="27.0" />
+      <JFXSpinner fx:id="spinner" layoutX="284.0" layoutY="46.0" prefHeight="23.0" prefWidth="27.0" />
       <Label alignment="CENTER_RIGHT" contentDisplay="TOP" layoutX="20.0" layoutY="82.0" prefHeight="15.0" prefWidth="27.0" text="ID:" />
-      <Label layoutX="52.0" layoutY="82.0" prefHeight="15.0" prefWidth="86.0" text="Unconnected" />
-      <JFXComboBox layoutX="52.0" layoutY="41.0" prefHeight="28.0" prefWidth="219.0" promptText="Select Devices..." />
-      <JFXButton layoutX="34.0" layoutY="107.0" prefHeight="32.0" prefWidth="86.0" text="Start" />
-      <JFXButton layoutX="198.0" layoutY="107.0" prefHeight="32.0" prefWidth="86.0" text="Cancel" />
-      <JFXClippedPane layoutX="-19.0" layoutY="-227.0" prefHeight="241.0" prefWidth="245.0" />
+      <Label fx:id="idLable" layoutX="52.0" layoutY="82.0" prefHeight="18.0" prefWidth="267.0" text="Unconnected" textFill="#ee6002" textOverrun="CLIP" />
+      <JFXComboBox fx:id="comboBox" layoutX="52.0" layoutY="41.0" onAction="#onComboBoxItemSelected" prefHeight="28.0" prefWidth="219.0" promptText="Select Devices..." />
+      <JFXButton fx:id="refreshButton" defaultButton="true" layoutX="34.0" layoutY="107.0" onAction="#onClickRefreshButton" prefHeight="32.0" prefWidth="86.0" style="-fx-background-color: #5162e8;" text="Refresh" textFill="WHITE" />
+      <JFXButton fx:id="cancelButton" cancelButton="true" layoutX="198.0" layoutY="107.0" onAction="#onClickCancelButton" prefHeight="32.0" prefWidth="86.0" style="-fx-background-color: #5162e8;" text="Cancel" textFill="WHITE" />
    </children>
 </AnchorPane>

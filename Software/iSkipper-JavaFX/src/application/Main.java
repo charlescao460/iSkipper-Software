@@ -1,10 +1,10 @@
 package application;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import com.jfoenix.controls.JFXButton;
 
 public class Main extends Application
 {
@@ -13,10 +13,10 @@ public class Main extends Application
 	{
 		try
 		{
-			BorderPane root = new BorderPane();
-			Scene scene = new Scene(root, 400, 400);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			primaryStage.setScene(scene);
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(Main.class.getResource("/views/SelectPortsView.fxml"));
+			Pane selectPortsPane = loader.load();
+			primaryStage.setScene(new Scene(selectPortsPane));
 			primaryStage.show();
 		} catch (Exception e)
 		{
