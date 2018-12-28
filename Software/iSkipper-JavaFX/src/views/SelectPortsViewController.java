@@ -131,7 +131,7 @@ public final class SelectPortsViewController
 	}
 
 	/**
-	 * Reset all the components' initial states.
+	 * Reset all components to the initial states.
 	 */
 	private void resetComponents()
 	{
