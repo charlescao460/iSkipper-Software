@@ -1,5 +1,6 @@
 package application;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import com.jfoenix.controls.JFXButton;
@@ -14,30 +15,51 @@ import javafx.stage.Stage;
 
 public class Main extends Application
 {
+	private Stage stage;
+	private JFXDecorator decorator;
+	private Pane selectPortsPane;
+	private Scene selectPortsScene;
+
 	@Override
 	public void start(Stage primaryStage)
 	{
+		stage = primaryStage;
 		try
 		{
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(this.getClass().getResource("/views/SelectPortsView.fxml"));
-			Pane selectPortsPane = loader.load();
-			JFXDecorator decorator = new JFXDecorator(primaryStage, selectPortsPane);
-			initializeDecorator(decorator);
-			Scene scene = new Scene(decorator);
-			scene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
-			primaryStage.setScene(scene);
-			primaryStage.setTitle("i>Skipper");
-			primaryStage.setResizable(false);
-			primaryStage.show();
+			loadSelectPortsView();
+			initializeDecorator();
+			initializeSelectPortsScene();
+			initializeStage();
 		} catch (Exception e)
 		{
 			e.printStackTrace();
 		}
 	}
 
-	private void initializeDecorator(JFXDecorator decorator)
+	private void initializeStage()
 	{
+		stage.setScene(selectPortsScene);
+		stage.setTitle("i>Skipper");
+		stage.setResizable(false);
+		stage.show();
+	}
+
+	private void initializeSelectPortsScene()
+	{
+		selectPortsScene = new Scene(decorator);
+		selectPortsScene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
+	}
+
+	private void loadSelectPortsView() throws IOException
+	{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/views/SelectPortsView.fxml"));
+		selectPortsPane = loader.load();
+	}
+
+	private void initializeDecorator()
+	{
+		decorator = new JFXDecorator(stage, selectPortsPane);
 		try
 		{ // Hide the full screen button through reflection.
 			Field fullScreenButtonField = JFXDecorator.class.getDeclaredField("btnFull");

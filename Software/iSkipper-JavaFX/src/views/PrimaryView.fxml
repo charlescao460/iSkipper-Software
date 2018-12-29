@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXDrawer?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXToolbar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+
+<StackPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <JFXListView>
+      </JFXListView>
+      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="650.0">
+         <top>
+            <VBox prefHeight="43.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+               <children>
+                  <JFXToolbar prefHeight="51.0" prefWidth="600.0">
+                     <left>
+                        <JFXRippler maskType="CIRCLE" prefHeight="43.0" prefWidth="72.0" style="-fx-ripple-color: WHITE;" BorderPane.alignment="CENTER">
+                           <children>
+                              <StackPane prefHeight="43.0" prefWidth="55.0">
+                                 <children>
+                                    <JFXHamburger prefHeight="43.0" prefWidth="61.0" />
+                                 </children>
+                              </StackPane>
+                           </children>
+                        </JFXRippler>
+                     </left>
+                     <right>
+                        <HBox prefHeight="43.0" prefWidth="293.0" BorderPane.alignment="CENTER" />
+                     </right>
+                  </JFXToolbar>
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <JFXDrawer BorderPane.alignment="CENTER" defaultDrawerSize="250" direction="LEFT"/>
+         </center>
+      </BorderPane>
+   </children>
+</StackPane>

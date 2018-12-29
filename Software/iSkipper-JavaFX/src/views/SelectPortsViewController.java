@@ -10,11 +10,14 @@ import javafx.fxml.FXML;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSpinner;
+import com.jfoenix.transitions.JFXFillTransition;
+
 import device.SerialAdapter;
 import emulator.Emulator;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 /**
  * @author CSR
@@ -53,6 +56,7 @@ public final class SelectPortsViewController
 	@FXML
 	private void onComboBoxItemSelected()
 	{
+		resetComponents();
 		// Disable components
 		refreshButton.setDisable(true);
 		spinner.setVisible(true);
@@ -71,7 +75,11 @@ public final class SelectPortsViewController
 						idLable.setText(emulator.getEmulatorID().toString());
 						refreshButton.setText("Start");// The 'Refresh' button now becomes 'Start' button
 						idLable.setTextFill(Color.web("#09af00"));
+						(new JFXFillTransition(new Duration(300), refreshButton, Color.web("#5162e8"),
+								Color.web("#41c300"))).play();// Animation
+						refreshButton.setDisable(false);
 						refreshButton.setStyle("-fx-background-color: #41c300;");
+						refreshButton.requestFocus();
 					});
 				} else
 				{
