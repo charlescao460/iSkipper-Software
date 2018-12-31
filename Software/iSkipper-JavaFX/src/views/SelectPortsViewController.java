@@ -3,17 +3,18 @@
  */
 package views;
 
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.transitions.JFXFillTransition;
 
+import application.utils.FocusOnMouse;
 import device.SerialAdapter;
 import emulator.Emulator;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
@@ -50,6 +51,8 @@ public final class SelectPortsViewController
 	private void initialize()
 	{
 		spinner.setVisible(false);// Hide spinner
+		FocusOnMouse.apply(refreshButton);
+		FocusOnMouse.apply(cancelButton);
 		listPorts();
 	}
 
@@ -64,7 +67,8 @@ public final class SelectPortsViewController
 		(new Thread(() ->
 		{
 			// Open the selected port
-			serial.setSerialPort(comboBox.getSelectionModel().getSelectedIndex());
+			serial.setSerialPort(
+					comboBox.getSelectionModel().getSelectedIndex());
 			if (serial.isAvailable())
 			{
 				emulator = new Emulator(serial);
@@ -73,12 +77,16 @@ public final class SelectPortsViewController
 					Platform.runLater(() ->
 					{
 						idLable.setText(emulator.getEmulatorID().toString());
-						refreshButton.setText("Start");// The 'Refresh' button now becomes 'Start' button
+						refreshButton.setText("Start");// The 'Refresh' button
+														// now becomes 'Start'
+														// button
 						idLable.setTextFill(Color.web("#09af00"));
-						(new JFXFillTransition(new Duration(300), refreshButton, Color.web("#5162e8"),
-								Color.web("#41c300"))).play();// Animation
+						(new JFXFillTransition(new Duration(300), refreshButton,
+								Color.web("#5162e8"), Color.web("#41c300")))
+										.play();// Animation
 						refreshButton.setDisable(false);
-						refreshButton.setStyle("-fx-background-color: #41c300;");
+						refreshButton
+								.setStyle("-fx-background-color: #41c300;");
 						refreshButton.requestFocus();
 					});
 				} else
@@ -92,7 +100,8 @@ public final class SelectPortsViewController
 
 			} else
 			{
-				Platform.runLater(() -> idLable.setText("Cannot open this port!"));
+				Platform.runLater(
+						() -> idLable.setText("Cannot open this port!"));
 			}
 			// Enable components
 			Platform.runLater(() ->
@@ -127,7 +136,8 @@ public final class SelectPortsViewController
 	private void listPorts()
 	{
 		serial = new SerialAdapter();
-		ObservableList<String> ports = FXCollections.observableArrayList(serial.getAllPortsByNames());
+		ObservableList<String> ports = FXCollections
+				.observableArrayList(serial.getAllPortsByNames());
 		if (ports.size() == 0)
 		{
 			idLable.setText("No avaliable port on this computer!");
