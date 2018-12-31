@@ -1,46 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXDrawer?>
 <?import com.jfoenix.controls.JFXHamburger?>
-<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXToggleNode?>
 <?import com.jfoenix.controls.JFXToolbar?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<StackPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
-   <children>
-      <JFXListView>
-      </JFXListView>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="650.0">
-         <top>
-            <VBox prefHeight="43.0" prefWidth="600.0" BorderPane.alignment="CENTER">
-               <children>
-                  <JFXToolbar prefHeight="51.0" prefWidth="600.0">
-                     <left>
-                        <JFXRippler maskType="CIRCLE" prefHeight="43.0" prefWidth="72.0" style="-fx-ripple-color: WHITE;" BorderPane.alignment="CENTER">
+<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="650.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.PrimaryViewController">
+   <top>
+      <VBox prefHeight="50.0" prefWidth="650.0" style="-fx-background-color: #0378bd;" BorderPane.alignment="TOP_RIGHT">
+         <children>
+            <JFXToolbar prefHeight="51.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+               <left>
+                  <HBox BorderPane.alignment="CENTER">
+                     <children>
+                        <JFXRippler maskType="CIRCLE" prefHeight="43.0" prefWidth="72.0" style="-fx-ripple-color: WHITE;">
                            <children>
                               <StackPane prefHeight="43.0" prefWidth="55.0">
                                  <children>
-                                    <JFXHamburger prefHeight="43.0" prefWidth="61.0" />
+                                    <JFXHamburger fx:id="hamburger" prefHeight="194.0" prefWidth="72.0" />
                                  </children>
                               </StackPane>
                            </children>
                         </JFXRippler>
-                     </left>
-                     <right>
-                        <HBox prefHeight="43.0" prefWidth="293.0" BorderPane.alignment="CENTER" />
-                     </right>
-                  </JFXToolbar>
-               </children>
-            </VBox>
-         </top>
-         <center>
-            <JFXDrawer BorderPane.alignment="CENTER" defaultDrawerSize="250" direction="LEFT"/>
-         </center>
-      </BorderPane>
-   </children>
-</StackPane>
+                        <Label fx:id="toolbarTitle" prefHeight="173.0" prefWidth="233.0" text="Multiple Choice" textFill="WHITE" textOverrun="CLIP">
+                           <font>
+                              <Font size="22.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+               </left>
+               <right>
+                  <HBox alignment="TOP_RIGHT" prefHeight="43.0" prefWidth="260.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <JFXToggleNode fx:id="startToggle" prefHeight="76.0" prefWidth="50.0" text="Start" textFill="WHITE" />
+                        <JFXButton fx:id="stopButton" prefHeight="87.0" prefWidth="55.0" text="Stop" textFill="WHITE" />
+                        <JFXButton fx:id="resetButton" layoutX="215.0" layoutY="10.0" prefHeight="114.0" prefWidth="55.0" text="Reset" textFill="WHITE" />
+                     </children></HBox>
+               </right>
+            </JFXToolbar>
+            <JFXProgressBar fx:id="progressbar" maxWidth="1.7976931348623157E308" prefHeight="6.0" prefWidth="803.0" VBox.vgrow="ALWAYS" />
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <JFXDrawer fx:id="drawer" defaultDrawerSize="250" direction="LEFT" prefHeight="441.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
+   </center>
+</BorderPane>

@@ -22,8 +22,23 @@
     -fx-font-size: 16;
 }
 
-.jfx-decorator .jfx-decorator-title-container .jfx-svg-glyph {
-    -fx-shape: "M512 682c-128.024-99.309-255.626-199.040-384-298l384-298 384 298c-128.375 98.958-255.974 198.693-384 298zM512 792l314-246 70 54-384 298-384-298 70-54z";
-    -jfx-size: 15;
-    -fx-background-color: WHITE;
+
+/*******************************************************************************
+*                                                                              *
+* JFX Hamburger Icon                                                           *
+*                                                                              *
+*******************************************************************************/
+
+.jfx-hamburger {
+    -fx-padding: 10.0;
+    -fx-spacing: 4px;
+    -fx-cursor: hand;
 }
+
+.jfx-hamburger StackPane {
+    -fx-pref-width: 30px;
+    -fx-pref-height: 4px;
+    -fx-background-color: #FFF;
+    -fx-background-radius: 5px;
+}
+
