@@ -5,16 +5,18 @@
 <?import com.jfoenix.controls.JFXHamburger?>
 <?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXRippler?>
+<?import com.jfoenix.controls.JFXScrollPane?>
 <?import com.jfoenix.controls.JFXToggleNode?>
 <?import com.jfoenix.controls.JFXToolbar?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="650.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.PrimaryViewController">
+<BorderPane fx:id="rootPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="493.0" prefWidth="650.0" stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.PrimaryViewController">
    <top>
       <VBox prefHeight="50.0" prefWidth="650.0" style="-fx-background-color: #0378bd;" BorderPane.alignment="TOP_RIGHT">
          <children>
@@ -26,7 +28,7 @@
                            <children>
                               <StackPane prefHeight="43.0" prefWidth="55.0">
                                  <children>
-                                    <JFXHamburger fx:id="hamburger" prefHeight="194.0" prefWidth="72.0" />
+                                    <JFXHamburger fx:id="hamburger" focusTraversable="true" prefHeight="194.0" prefWidth="72.0" />
                                  </children>
                               </StackPane>
                            </children>
@@ -45,6 +47,7 @@
                         <JFXToggleNode fx:id="startToggle" prefHeight="76.0" prefWidth="50.0" text="Start" textFill="WHITE" />
                         <JFXButton fx:id="stopButton" prefHeight="87.0" prefWidth="55.0" text="Stop" textFill="WHITE" />
                         <JFXButton fx:id="resetButton" layoutX="215.0" layoutY="10.0" prefHeight="114.0" prefWidth="55.0" text="Reset" textFill="WHITE" />
+                        <JFXToggleNode fx:id="rawToggle" prefHeight="48.0" prefWidth="52.0" text="Raw" textFill="WHITE" />
                      </children></HBox>
                </right>
             </JFXToolbar>
@@ -53,6 +56,11 @@
       </VBox>
    </top>
    <center>
-      <JFXDrawer fx:id="drawer" defaultDrawerSize="250" direction="LEFT" prefHeight="441.0" prefWidth="650.0" BorderPane.alignment="CENTER" />
+      <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <JFXScrollPane fx:id="mainPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="444.0" prefWidth="650.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <JFXDrawer fx:id="drawer" defaultDrawerSize="250" direction="LEFT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="444.0" prefWidth="250.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0" />
+         </children>
+      </AnchorPane>
    </center>
 </BorderPane>
