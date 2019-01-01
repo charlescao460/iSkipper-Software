@@ -3,6 +3,8 @@
  */
 package support;
 
+import java.util.Random;
+
 /**
  * 
  * The class for storage iClicker ID, which is an DWORD
@@ -12,7 +14,8 @@ package support;
  */
 public class IClickerID implements Cloneable
 {
-	public static final int ID_HEX_STRING_LENGTH = 8;// iClicker ID could be represented as a string of 8 chars
+	public static final int ID_HEX_STRING_LENGTH = 8;// iClicker ID could be represented as a string
+														// of 8 chars
 	private int ID;
 	private byte[] arrID;
 
@@ -110,7 +113,8 @@ public class IClickerID implements Cloneable
 	@Override
 	public boolean equals(Object obj)
 	{
-		return obj.getClass().equals(this.getClass()) ? ((IClickerID) obj).getID() == this.ID : false;
+		return obj.getClass().equals(this.getClass()) ? ((IClickerID) obj).getID() == this.ID
+				: false;
 	}
 
 	/**
@@ -162,6 +166,18 @@ public class IClickerID implements Cloneable
 		{
 			return null;
 		}
+	}
+
+	/**
+	 * @return A random IClickerID. Maybe useful for testing.
+	 */
+	public static IClickerID getRandomID()
+	{
+		Random random = new Random();
+		byte arrID[] = new byte[4];
+		random.nextBytes(arrID);
+		arrID[3] = (byte) (arrID[0] ^ arrID[1] ^ arrID[2]);
+		return new IClickerID(arrID);
 	}
 
 	/**

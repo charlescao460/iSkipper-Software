@@ -17,13 +17,6 @@ public class SavedID
 	private String note;
 
 	/**
-	 * Default Constructor
-	 */
-	public SavedID()
-	{
-	}
-
-	/**
 	 * @param id
 	 * @param name
 	 * @param note
@@ -51,6 +44,8 @@ public class SavedID
 	 */
 	public void setId(IClickerID id)
 	{
+		if (id == null)
+			throw new NullPointerException("ID Cannot be Null!");
 		this.id = id;
 	}
 
@@ -128,7 +123,7 @@ public class SavedID
 			long ret = 0;
 			for (SavedID id : this)
 			{
-				ret += 8; // Hexadecimal id length
+				ret += IClickerID.ID_HEX_STRING_LENGTH; // Hexadecimal id length
 				if (id.getName() != null)
 					ret += id.getName().length();
 				else

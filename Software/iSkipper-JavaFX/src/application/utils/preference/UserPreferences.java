@@ -45,21 +45,24 @@ public final class UserPreferences
 	private static SavedIDList readList()
 	{
 		File csvFile = new File(listCSVLocation);
-		try
+		if (csvFile.length() > 0)
 		{
-			String strCSV = new String(Files.readAllBytes(csvFile.toPath()));
-			return new SavedID.SavedIDList(strCSV);
+			try
+			{
+				String strCSV = new String(Files.readAllBytes(csvFile.toPath()));
+				return new SavedID.SavedIDList(strCSV);
 
-		} catch (Exception e)
-		{
-			e.printStackTrace();
+			} catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		return new SavedID.SavedIDList();
 	}
 
 	private static String readCSVFilePath()
 	{
-		String strUserHome = System.getenv("user.home");
+		String strUserHome = System.getProperty("user.home");
 		File folder = new File(strUserHome, PREFERENCE_FOLDER_NAME);
 		if (!folder.exists())
 		{// Then we create it
