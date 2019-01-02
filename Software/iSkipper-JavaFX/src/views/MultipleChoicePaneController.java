@@ -5,16 +5,24 @@ package views;
 
 import java.util.ArrayList;
 
+import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXToggleNode;
 import com.jfoenix.effects.JFXDepthManager;
 
+import device.ReceivedPacketEvent;
 import emulator.Emulator;
+import emulator.EmulatorModes;
+import handler.CaptureHandler;
+import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
-import support.Answer;
 import support.AnswerPacketHashMap;
+import support.AnswerPacketHashMap.AnswerStats;
 import support.IClickerChannel;
+import views.PrimaryViewController.AbstractPrimaryViewToolbarEventsHandler;
 
 /**
  * @author CSR
@@ -24,6 +32,12 @@ public final class MultipleChoicePaneController
 {
 	@FXML
 	private AnchorPane rootPane;
+
+	private PrimaryViewController primaryViewController;
+
+	private AbstractPrimaryViewToolbarEventsHandler toolbarEventsHandler;
+
+	private GUICapturingHandler capturingHandler;
 
 	/************* Status Pane *****************/
 	private StatusPaneController statusPaneController;
@@ -76,7 +90,15 @@ public final class MultipleChoicePaneController
 		drawDepthShadow();
 		statusPaneController = new StatusPaneController();
 		dataPaneController = new DataPaneController();
+		toolbarEventsHandler = new MultipleChoiceToolbarEventHandler();
+		capturingHandler = new GUICapturingHandler(new AnswerPacketHashMap());
 
+	}
+
+	private void drawDepthShadow()
+	{
+		JFXDepthManager.pop(statusPane);
+		JFXDepthManager.pop(dataPane);
 	}
 
 	/**
@@ -112,12 +134,30 @@ public final class MultipleChoicePaneController
 		return dataPaneController;
 	}
 
-	private void drawDepthShadow()
+	/**
+	 * @param primaryViewController
+	 *            the primaryViewController to set
+	 */
+	public void setPrimaryViewController(PrimaryViewController primaryViewController)
 	{
-		JFXDepthManager.pop(statusPane);
-		JFXDepthManager.pop(dataPane);
+		this.primaryViewController = primaryViewController;
 	}
 
+	/**
+	 * @return the toolbarEventsHandler
+	 */
+	public AbstractPrimaryViewToolbarEventsHandler getToolbarEventsHandler()
+	{
+		return toolbarEventsHandler;
+	}
+
+	/**
+	 * 
+	 * The controller of status pane
+	 * 
+	 * @author CSR
+	 *
+	 */
 	public class StatusPaneController
 	{
 		public StatusPaneController()
@@ -130,27 +170,55 @@ public final class MultipleChoicePaneController
 			}
 		}
 
+		/**
+		 * Set the status string to ready
+		 */
 		public void setReady()
 		{
 			statusLabel.setText("Ready...");
 		}
 
+		/**
+		 * Set the status string to capturing
+		 */
 		public void setCapturing()
 		{
 			statusLabel.setText("Capturing");
 		}
 
+		/**
+		 * Set the status string to sending
+		 */
 		public void setSending()
 		{
 			statusLabel.setText("Sending");
 		}
 
+		/**
+		 * Set the status string to paused
+		 * 
+		 */
+		public void setPaused()
+		{
+			statusLabel.setText("Paused");
+		}
+
+		/**
+		 * @param channel
+		 *            The iCkicker Channel to show
+		 */
 		public void setChannel(IClickerChannel channel)
 		{
 			channelLabel.setText(channel.name());
 		}
 	}
 
+	/**
+	 * The controller of data pane
+	 * 
+	 * @author CSR
+	 *
+	 */
 	public class DataPaneController
 	{
 		private static final int FONT_SIZE_1 = 22;
@@ -166,6 +234,9 @@ public final class MultipleChoicePaneController
 			initialize();
 		}
 
+		/**
+		 * Initialize the data
+		 */
 		public void initialize()
 		{
 			idCountLabel.setText("0");
@@ -184,16 +255,27 @@ public final class MultipleChoicePaneController
 			ansELabel.setFont(Font.font(FONT_SIZE_1));
 		}
 
-		public void update(AnswerPacketHashMap hashMap)
+		/**
+		 * Update displayed data
+		 * 
+		 * @param stats
+		 *            the hashMap stats contains answers
+		 */
+		public void update(AnswerStats stats)
 		{
+			if (stats.getNumsTotalPacketRecieved() == 0)
+			{
+				initialize();
+				return;
+			}
 			// Change texts
-			idCountLabel.setText(String.valueOf(hashMap.getNumsTotalIDs()));
-			resCountLabel.setText(String.valueOf(hashMap.getNumsTotalPacketRecieved()));
-			ansALabel.setText(String.valueOf(hashMap.getAnswerCount(Answer.A)));
-			ansBLabel.setText(String.valueOf(hashMap.getAnswerCount(Answer.B)));
-			ansCLabel.setText(String.valueOf(hashMap.getAnswerCount(Answer.C)));
-			ansDLabel.setText(String.valueOf(hashMap.getAnswerCount(Answer.D)));
-			ansELabel.setText(String.valueOf(hashMap.getAnswerCount(Answer.E)));
+			idCountLabel.setText(String.valueOf(stats.getIDCount()));
+			resCountLabel.setText(String.valueOf(stats.getNumsTotalPacketRecieved()));
+			ansALabel.setText(String.valueOf(stats.getNumsA()));
+			ansBLabel.setText(String.valueOf(stats.getNumsB()));
+			ansCLabel.setText(String.valueOf(stats.getNumsC()));
+			ansDLabel.setText(String.valueOf(stats.getNumsD()));
+			ansELabel.setText(String.valueOf(stats.getNumsE()));
 			// Set fonts according to their numbers
 			ArrayList<Label> labels = new ArrayList<Label>(5);
 			labels.add(ansALabel);
@@ -206,6 +288,102 @@ public final class MultipleChoicePaneController
 			{
 				labels.get(i).setFont(Font.font(FONT_SIZES[i]));
 			}
+		}
+	}
+
+	private class GUICapturingHandler extends CaptureHandler
+	{
+		public GUICapturingHandler(AnswerPacketHashMap hashMap)
+		{
+			super(hashMap, true/* Print Raw */, false);
+		}
+
+		@Override
+		public void onReceivedPacketEvent(ReceivedPacketEvent packetEvent)
+		{
+			super.onReceivedPacketEvent(packetEvent);
+			Platform.runLater(() ->
+			{
+				// TODO: Add GUI changes here.
+				dataPaneController.update(hashMap.getAnswerStats());
+			});
+		}
+	}
+
+	private class MultipleChoiceToolbarEventHandler
+			extends PrimaryViewController.AbstractPrimaryViewToolbarEventsHandler
+	{
+
+		@Override
+		public void OnToggleStart(ActionEvent e, JFXToggleNode startToggle)
+		{
+			if (emulator != null && emulator.getMode() == EmulatorModes.STANDBY)
+			{
+				primaryViewController.showProgressBar();
+				(new Thread(() ->
+				{
+					emulator.startCapture(capturingHandler);
+					Platform.runLater(() ->
+					{
+						primaryViewController.hideProgressBar();
+						dataPaneController.update(capturingHandler.getHashMap().getAnswerStats());
+						statusPaneController.setCapturing();
+					});
+
+				})).start();
+
+			} else
+			{
+				startToggle.setSelected(false);
+			}
+		}
+
+		@Override
+		public void OnUntoggleStart(ActionEvent e, JFXToggleNode startToggle)
+		{
+			if (emulator != null && emulator.getMode() != EmulatorModes.STANDBY)
+			{
+				primaryViewController.showProgressBar();
+				(new Thread(() ->
+				{
+					emulator.stopAndGoStandby();
+					Platform.runLater(() ->
+					{
+						primaryViewController.hideProgressBar();
+						statusPaneController.setPaused();
+					});
+				})).start();
+			}
+
+		}
+
+		@Override
+		public void OnActionButtonStop(ActionEvent e, JFXButton stopButton)
+		{
+			capturingHandler.getHashMap().clear();
+			statusPaneController.setReady();
+			primaryViewController.getStartToggleNode().setSelected(false);
+			if (emulator != null && emulator.getMode() != EmulatorModes.STANDBY)
+			{
+				primaryViewController.showProgressBar();
+				(new Thread(() ->
+				{
+					emulator.stopAndGoStandby();;
+					Platform.runLater(() ->
+					{
+						primaryViewController.hideProgressBar();
+
+					});
+				})).start();
+			}
+
+		}
+
+		@Override
+		public void OnActionButtonReset(ActionEvent e, JFXButton resetButton)
+		{
+			capturingHandler.getHashMap().clear();
+			dataPaneController.initialize();
 		}
 
 	}

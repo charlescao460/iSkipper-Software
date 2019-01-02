@@ -17,9 +17,11 @@ import com.jfoenix.svg.SVGGlyph;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 
 import application.utils.FocusOnMouse;
+import emulator.Emulator;
 import javafx.animation.Transition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -77,6 +79,10 @@ public final class PrimaryViewController
 
 	private JFXListView<Label> listView;
 
+	private AbstractPrimaryViewToolbarEventsHandler toolbarEventsHandler;
+
+	private Emulator emulator;
+
 	private static final double SVG_ICON_RATIO = 0.6;
 
 	private final static String ITEM_STRING_MULTIPLE_CHOICE = "Multiple Choice";
@@ -86,14 +92,16 @@ public final class PrimaryViewController
 	@FXML
 	private void initialize()
 	{
+		// initialize components of PrimaryView
 		progressbar.setVisible(false);
 		initializeHamburger();
 		initializeListView();
 		initializeDrawer();
 		setSvgIcons();
 		applyFocusOnMouse();
-
+		// Load content into PrimaryView
 		loadMutipleChoicePane();
+		setToolbarComponentEventHandlers();
 	}
 
 	private void initializeHamburger()
@@ -216,10 +224,32 @@ public final class PrimaryViewController
 		node.setGraphic(svg);
 	}
 
+	private void setToolbarComponentEventHandlers()
+	{
+		if (toolbarEventsHandler != null)
+		{
+			startToggle.setOnAction(e ->
+			{
+				if (startToggle.isSelected())
+					toolbarEventsHandler.OnToggleStart(e, startToggle);
+				else
+					toolbarEventsHandler.OnUntoggleStart(e, startToggle);
+			});
+			stopButton.setOnAction(e -> toolbarEventsHandler.OnActionButtonStop(e, stopButton));
+			resetButton.setOnAction(e -> toolbarEventsHandler.OnActionButtonReset(e, resetButton));
+
+		}
+
+	}
+
 	private void loadMutipleChoicePane()
 	{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/views/MultipleChoicePane.fxml"));
+		MultipleChoicePaneController controller = new MultipleChoicePaneController();
+		controller.setEmulator(emulator);
+		controller.setPrimaryViewController(this);
+		loader.setController(controller);
 		Pane mutipleChoicePane;
 		try
 		{
@@ -229,6 +259,8 @@ public final class PrimaryViewController
 		{
 			e.printStackTrace();
 		}
+		this.setToolbarEventsHandler(controller.getToolbarEventsHandler());
+
 	}
 
 	private void changeMainPaneContent(Node node)
@@ -249,6 +281,97 @@ public final class PrimaryViewController
 		FocusOnMouse.apply(resetButton);
 		FocusOnMouse.apply(startToggle);
 		FocusOnMouse.apply(stopButton);
+
+	}
+
+	/**
+	 * The abstract class to handle events of the toolbar's components of
+	 * PrimaryView.
+	 * 
+	 * @author CSR
+	 *
+	 */
+	public static abstract class AbstractPrimaryViewToolbarEventsHandler
+	{
+		/**
+		 * When the 'start' ToggleNode was toggled.
+		 */
+		public abstract void OnToggleStart(ActionEvent e, JFXToggleNode startToggle);
+
+		/**
+		 * When the 'start' ToggleNode was untoggled.
+		 */
+		public abstract void OnUntoggleStart(ActionEvent e, JFXToggleNode startToggle);
+
+		/**
+		 * When the 'stop' button was activated.
+		 */
+		public abstract void OnActionButtonStop(ActionEvent e, JFXButton stopButton);
+
+		/**
+		 * When the 'reset' button was activated.
+		 */
+		public abstract void OnActionButtonReset(ActionEvent e, JFXButton resetButton);
+	}
+
+	/**
+	 * @return the toolbarEventsHandler to handle events of the toolbar's components
+	 *         of PrimaryView.
+	 */
+	public AbstractPrimaryViewToolbarEventsHandler getToolbarEventsHandler()
+	{
+		return toolbarEventsHandler;
+	}
+
+	/**
+	 * @param toolbarEventsHandler
+	 *            the toolbarEventsHandler to set to handle events of the toolbar's
+	 *            components of PrimaryView.
+	 */
+	public void setToolbarEventsHandler(AbstractPrimaryViewToolbarEventsHandler toolbarEventsHandler)
+	{
+		this.toolbarEventsHandler = toolbarEventsHandler;
+	}
+
+	/**
+	 * @return the emulator
+	 */
+	public Emulator getEmulator()
+	{
+		return emulator;
+	}
+
+	/**
+	 * @param emulator
+	 *            the emulator to set
+	 */
+	public void setEmulator(Emulator emulator)
+	{
+		this.emulator = emulator;
+	}
+
+	/**
+	 * Show the progress Bar.
+	 */
+	public void showProgressBar()
+	{
+		progressbar.setVisible(true);
+	}
+
+	/**
+	 * Hide the progress Bar.
+	 */
+	public void hideProgressBar()
+	{
+		progressbar.setVisible(false);
+	}
+
+	/**
+	 * @return the 'start' JFXToggleNode
+	 */
+	public JFXToggleNode getStartToggleNode()
+	{
+		return startToggle;
 	}
 
 }

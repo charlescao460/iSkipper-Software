@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSpinner;
 import com.jfoenix.transitions.JFXFillTransition;
 
+import application.Main;
 import application.utils.FocusOnMouse;
 import application.utils.preference.UserPreferences;
 import device.SerialAdapter;
@@ -48,6 +49,7 @@ public final class SelectPortsViewController
 
 	private SerialAdapter serial;
 	private Emulator emulator;
+	private Main mainClass;
 
 	@FXML
 	private void initialize()
@@ -115,7 +117,7 @@ public final class SelectPortsViewController
 	{
 		if (emulator != null && emulator.isAvailable()) // Now 'Start' button
 		{
-			// TODO
+			mainClass.showPrimaryView(emulator);
 		} else
 		{
 			resetComponents();
@@ -156,6 +158,15 @@ public final class SelectPortsViewController
 		refreshButton.setText("Refresh");
 		idLable.setTextFill(Color.web("#ee6002"));
 		refreshButton.setStyle("-fx-background-color: #5162e8;");
+	}
+
+	/**
+	 * @param mainClass
+	 *            the mainClass to set
+	 */
+	public void setMainClass(Main mainClass)
+	{
+		this.mainClass = mainClass;
 	}
 
 }

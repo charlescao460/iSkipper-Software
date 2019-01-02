@@ -22,7 +22,7 @@ public class CaptureHandler implements ReceivedPacketHandlerInterface
 	private static final int CAPTURE_ANSWER_INDEX = 9;
 	private static final int CAPTURE_ID_INDEX = 11;
 
-	private AnswerPacketHashMap hashMap;
+	protected AnswerPacketHashMap hashMap;
 	private boolean shouldPrintRaw;
 	private boolean shouldPrintStatis;
 

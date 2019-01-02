@@ -33,6 +33,17 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 		}
 	}
 
+	@Override
+	public void clear()
+	{
+		super.clear();
+		numsTotalPacketRecieved = 0;
+		for (Answer a : Answer.values())
+		{
+			answerCounter.put(a, 0);
+		}
+	}
+
 	/**
 	 * @param answerPacket
 	 *            the AnswerPacket to put into this HashMap.
@@ -104,6 +115,109 @@ public class AnswerPacketHashMap extends HashMap<Integer, Answer>
 	public int getNumsTotalIDs()
 	{
 		return this.size();
+	}
+
+	public AnswerStats getAnswerStats()
+	{
+		return new AnswerStats(getNumsTotalIDs(), numsTotalPacketRecieved, getAnswerCount(Answer.A),
+				getAnswerCount(Answer.B), getAnswerCount(Answer.C), getAnswerCount(Answer.D), getAnswerCount(Answer.E));
+	}
+
+	/**
+	 * 
+	 * The class to storage statistical data of captured answers.
+	 * 
+	 * @author CSR
+	 *
+	 */
+	public static class AnswerStats
+	{
+		private int answerCount;
+		private int numsTotalPacketRecieved;
+		private int numsA;
+		private int numsB;
+		private int numsC;
+		private int numsD;
+		private int numsE;
+
+		/**
+		 * @param answerCount
+		 * @param numsTotalPacketRecieved
+		 * @param numsA
+		 * @param numsB
+		 * @param numsC
+		 * @param numsD
+		 * @param numsE
+		 */
+		public AnswerStats(int answerCount, int numsTotalPacketRecieved, int numsA, int numsB, int numsC, int numsD,
+				int numsE)
+		{
+			super();
+			this.answerCount = answerCount;
+			this.numsTotalPacketRecieved = numsTotalPacketRecieved;
+			this.numsA = numsA;
+			this.numsB = numsB;
+			this.numsC = numsC;
+			this.numsD = numsD;
+			this.numsE = numsE;
+		}
+
+		/**
+		 * @return the IDCount
+		 */
+		public int getIDCount()
+		{
+			return answerCount;
+		}
+
+		/**
+		 * @return the numsTotalPacketRecieved
+		 */
+		public int getNumsTotalPacketRecieved()
+		{
+			return numsTotalPacketRecieved;
+		}
+
+		/**
+		 * @return the numsA
+		 */
+		public int getNumsA()
+		{
+			return numsA;
+		}
+
+		/**
+		 * @return the numsB
+		 */
+		public int getNumsB()
+		{
+			return numsB;
+		}
+
+		/**
+		 * @return the numsC
+		 */
+		public int getNumsC()
+		{
+			return numsC;
+		}
+
+		/**
+		 * @return the numsD
+		 */
+		public int getNumsD()
+		{
+			return numsD;
+		}
+
+		/**
+		 * @return the numsE
+		 */
+		public int getNumsE()
+		{
+			return numsE;
+		}
+
 	}
 
 }
