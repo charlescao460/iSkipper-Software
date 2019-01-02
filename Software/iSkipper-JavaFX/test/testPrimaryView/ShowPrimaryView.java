@@ -18,6 +18,7 @@ public class ShowPrimaryView extends Application
 			loader.setLocation(this.getClass().getResource("/views/PrimaryView.fxml"));
 			Pane pane = loader.load();
 			Scene scene = new Scene(pane);
+			scene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 

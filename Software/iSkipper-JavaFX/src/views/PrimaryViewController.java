@@ -3,6 +3,8 @@
  */
 package views;
 
+import java.io.IOException;
+
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
@@ -19,9 +21,14 @@ import javafx.animation.Transition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -36,7 +43,10 @@ public final class PrimaryViewController
 	private BorderPane rootPane;
 
 	@FXML
-	private JFXScrollPane mainPane;
+	private ScrollPane scrollPane;
+
+	@FXML
+	private AnchorPane mainPane;
 
 	@FXML
 	private JFXToolbar toolbar;
@@ -77,19 +87,13 @@ public final class PrimaryViewController
 	private void initialize()
 	{
 		progressbar.setVisible(false);
-		initializeMainPane();
 		initializeHamburger();
 		initializeListView();
 		initializeDrawer();
 		setSvgIcons();
 		applyFocusOnMouse();
 
-	}
-
-	private void initializeMainPane()
-	{
-		mainPane.getMainHeader().setVisible(false);
-		mainPane.getCondensedHeader().setVisible(false);
+		loadMutipleChoicePane();
 	}
 
 	private void initializeHamburger()
@@ -210,6 +214,32 @@ public final class PrimaryViewController
 	{
 		svg.setSizeForHeight(node.getPrefHeight() * SVG_ICON_RATIO);
 		node.setGraphic(svg);
+	}
+
+	private void loadMutipleChoicePane()
+	{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/views/MultipleChoicePane.fxml"));
+		Pane mutipleChoicePane;
+		try
+		{
+			mutipleChoicePane = loader.load();
+			changeMainPaneContent(mutipleChoicePane);
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	private void changeMainPaneContent(Node node)
+	{
+		mainPane.getChildren().clear();
+		mainPane.getChildren().add(node);
+		AnchorPane.setBottomAnchor(node, 0.0);
+		AnchorPane.setLeftAnchor(node, 0.0);
+		AnchorPane.setRightAnchor(node, 0.0);
+		AnchorPane.setTopAnchor(node, 0.0);
+		JFXScrollPane.smoothScrolling(scrollPane);
 	}
 
 	private void applyFocusOnMouse()
