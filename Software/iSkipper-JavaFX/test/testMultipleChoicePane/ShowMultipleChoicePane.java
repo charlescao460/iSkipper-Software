@@ -1,4 +1,5 @@
 package testMultipleChoicePane;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,7 @@ public class ShowMultipleChoicePane extends Application
 			loader.setLocation(this.getClass().getResource("/views/MultipleChoicePane.fxml"));
 			Pane pane = loader.load();
 			Scene scene = new Scene(pane);
+			scene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 

@@ -239,6 +239,7 @@ public final class PrimaryViewController
 		AnchorPane.setLeftAnchor(node, 0.0);
 		AnchorPane.setRightAnchor(node, 0.0);
 		AnchorPane.setTopAnchor(node, 0.0);
+
 		JFXScrollPane.smoothScrolling(scrollPane);
 	}
 

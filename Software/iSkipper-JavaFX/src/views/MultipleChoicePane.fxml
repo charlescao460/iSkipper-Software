@@ -1,11 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="537.0" prefWidth="806.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="637.0" prefWidth="956.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.MultipleChoicePaneController">
    <children>
-      <Pane layoutX="14.0" layoutY="14.0" prefHeight="74.0" prefWidth="273.0" style="-fx-background-color: WHITE;" />
+      <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="609.0" prefWidth="500.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+         <children>
+            <AnchorPane fx:id="statusPane" prefHeight="84.0" prefWidth="351.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <VBox prefHeight="78.0" prefWidth="351.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox fx:id="statusBox" prefHeight="83.0" prefWidth="351.0">
+                           <children>
+                              <Label alignment="BOTTOM_LEFT" prefHeight="65.0" prefWidth="104.0" text=" Status:">
+                                 <font>
+                                    <Font size="25.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="statusLabel" contentDisplay="CENTER" prefHeight="83.0" prefWidth="267.0" text="Ready......" textFill="#41c300">
+                                 <font>
+                                    <Font size="45.0" />
+                                 </font>
+                              </Label>
+                              <VBox prefHeight="83.0" prefWidth="151.0">
+                                 <children>
+                                    <HBox prefHeight="55.0" prefWidth="135.0">
+                                       <children>
+                                          <Label prefHeight="42.0" prefWidth="106.0" text="Channel:">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="channelLabel" prefHeight="42.0" prefWidth="71.0" text="XX" textFill="#01599b">
+                                             <font>
+                                                <Font size="25.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <HBox prefHeight="54.0" prefWidth="135.0">
+                                       <children>
+                                          <Label prefHeight="41.0" prefWidth="35.0" text="ID: ">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                          <Label fx:id="idLabel" prefHeight="41.0" prefWidth="111.0" text="12345678" textFill="#01599b">
+                                             <font>
+                                                <Font size="20.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </children>
+                              </VBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="dataPane" layoutY="96.0" prefHeight="83.0" prefWidth="500.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <VBox prefHeight="99.0" prefWidth="500.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="40.0" prefWidth="351.0">
+                           <children>
+                              <Label alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="85.0" text="ID Count:">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="idCountLabel" alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="125.0" text="123456" textFill="#009e7e" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="150.0" text="Response Count:">
+                                 <font>
+                                    <Font size="18.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="resCountLabel" alignment="BOTTOM_LEFT" prefHeight="40.0" prefWidth="111.0" text="123456" textFill="#009e7e" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_RIGHT" prefHeight="64.0" prefWidth="500.0">
+                           <children>
+                              <Label alignment="BOTTOM_RIGHT" prefHeight="69.0" prefWidth="30.0" text=" A:">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="ansALabel" alignment="BOTTOM_LEFT" ellipsisString=".." prefHeight="62.0" prefWidth="70.0" text="123" textFill="#41c300" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="BOTTOM_RIGHT" prefHeight="69.0" prefWidth="30.0" text=" B:">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="ansBLabel" alignment="BOTTOM_LEFT" ellipsisString=".." prefHeight="62.0" prefWidth="70.0" text="123" textFill="#41c300" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="BOTTOM_RIGHT" prefHeight="90.0" prefWidth="30.0" text=" C:">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="ansCLabel" alignment="BOTTOM_LEFT" ellipsisString=".." prefHeight="62.0" prefWidth="70.0" text="123" textFill="#41c300" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="BOTTOM_RIGHT" prefHeight="107.0" prefWidth="30.0" text="D:">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="ansDLabel" alignment="BOTTOM_LEFT" ellipsisString=".." prefHeight="62.0" prefWidth="70.0" text="123" textFill="#41c300" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="BOTTOM_RIGHT" prefHeight="108.0" prefWidth="30.0" text=" E:">
+                                 <font>
+                                    <Font size="22.0" />
+                                 </font>
+                              </Label>
+                              <Label fx:id="ansELabel" alignment="BOTTOM_LEFT" ellipsisString=".." prefHeight="62.0" prefWidth="70.0" text="123" textFill="#41c300" textOverrun="LEADING_ELLIPSIS">
+                                 <font>
+                                    <Font size="34.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
