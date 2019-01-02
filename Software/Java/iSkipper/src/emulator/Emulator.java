@@ -114,6 +114,39 @@ public class Emulator
 	}
 
 	/**
+	 * Start the capturing mode. Must be STANDBY mode to start capturing.
+	 * 
+	 * @param captureHandler
+	 *            The CaptureHandler to handle the incoming answers.
+	 * @return Whether successfully switch to Capturing mode.
+	 * 
+	 * @see CaptureHandler#CaptureHandler(AnswerPacketHashMap, boolean, boolean);
+	 */
+	public boolean startCapture(CaptureHandler captureHandler)
+	{
+		if (handler == null)
+			throw new NullPointerException("CaptureHandler Cannot Be Null!");
+		if (mode != EmulatorModes.STANDBY)
+			return false;
+		serial.writeByte(SerialSymbols.OP_CAPTURE);
+		serial.setPacketHandler((packet) ->
+		{
+
+			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
+			{
+				handler = captureHandler;
+				mode = EmulatorModes.CAPTURE;
+				wakeEmulator();
+				return;
+			}
+			System.out.print(packet);
+		});
+		waitForHandler();
+		serial.setPacketHandler(handler);
+		return mode == EmulatorModes.CAPTURE;
+	}
+
+	/**
 	 * Stop the current mode and change to STANDBY mode. It would return true if it
 	 * was already in STANDBY mode.
 	 * 
