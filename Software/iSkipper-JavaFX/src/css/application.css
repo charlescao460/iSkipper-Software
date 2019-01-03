@@ -59,8 +59,12 @@
     -fx-background-radius: 1.0;
 }
 
-.scroll-bar > .increment-button, .scroll-bar > .decrement-button {
+.scroll-bar:vertical > .increment-button, .scroll-bar:vertical > .decrement-button {
     -fx-padding: 5 2 5 2;
+}
+
+.scroll-bar:horizontal > .increment-button, .scroll-bar:horizontal > .decrement-button {
+    -fx-padding: 2 2 2 2;
 }
 
 .scroll-bar > .increment-button, .scroll-bar > .decrement-button, .scroll-bar:hover > .increment-button, .scroll-bar:hover > .decrement-button {
@@ -77,6 +81,14 @@
 
 .scroll-bar > .decrement-button > .decrement-arrow {
     -fx-shape: "M298 598l214-214 214 214h-428z";
+}
+
+.scroll-bar:horizontal > .increment-button > .increment-arrow {
+    -fx-rotate: 270;
+}
+
+.scroll-bar:horizontal > .decrement-button > .decrement-arrow {
+    -fx-rotate: 270;
 }
 
 /*******************************************************************************
