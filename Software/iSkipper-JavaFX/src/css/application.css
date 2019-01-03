@@ -63,9 +63,6 @@
     -fx-padding: 5 2 5 2;
 }
 
-.scroll-bar:horizontal > .increment-button, .scroll-bar:horizontal > .decrement-button {
-    -fx-padding: 2 2 2 2;
-}
 
 .scroll-bar > .increment-button, .scroll-bar > .decrement-button, .scroll-bar:hover > .increment-button, .scroll-bar:hover > .decrement-button {
     -fx-background-color: transparent;
@@ -85,10 +82,15 @@
 
 .scroll-bar:horizontal > .increment-button > .increment-arrow {
     -fx-rotate: 270;
+    -fx-pref-height: 5;
+    -fx-pref-width: 5;
+
 }
 
 .scroll-bar:horizontal > .decrement-button > .decrement-arrow {
     -fx-rotate: 270;
+    -fx-pref-height: 5;
+    -fx-pref-width: 5;
 }
 
 /*******************************************************************************

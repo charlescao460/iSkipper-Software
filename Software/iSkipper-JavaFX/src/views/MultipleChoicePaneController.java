@@ -287,6 +287,8 @@ public final class MultipleChoicePaneController
 			for (int i = 0; i < labels.size(); i++)
 			{
 				labels.get(i).setFont(Font.font(FONT_SIZES[i]));
+				if (i >= 1 && labels.get(i).getText().equals(labels.get(i - 1).getText()))
+					labels.get(i).setFont(Font.font(FONT_SIZES[i - 1]));
 			}
 		}
 	}
@@ -374,6 +376,7 @@ public final class MultipleChoicePaneController
 						primaryViewController.hideProgressBar();
 
 					});
+					System.gc();
 				})).start();
 			}
 
@@ -384,6 +387,7 @@ public final class MultipleChoicePaneController
 		{
 			capturingHandler.getHashMap().clear();
 			dataPaneController.initialize();
+			System.gc();
 		}
 
 	}
