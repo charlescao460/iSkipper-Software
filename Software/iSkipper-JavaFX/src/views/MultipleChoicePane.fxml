@@ -150,6 +150,7 @@
                   </VBox>
                </children>
             </AnchorPane>
+            <AnchorPane fx:id="areaChartPane" layoutY="192.0" prefHeight="386.0" prefWidth="500.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
       </AnchorPane>
    </children>

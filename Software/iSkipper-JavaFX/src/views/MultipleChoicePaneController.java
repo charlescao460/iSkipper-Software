@@ -16,6 +16,10 @@ import handler.CaptureHandler;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
@@ -83,6 +87,14 @@ public final class MultipleChoicePaneController
 
 	private Emulator emulator;
 
+	/************* Area Chart *****************/
+	@FXML
+	private AnchorPane areaChartPane;
+
+	private AreaChart<Number, Number> areaChart;
+
+	private AreaChartController areaChartController;
+
 	/************* Functions *****************/
 	@FXML
 	private void initialize()
@@ -92,6 +104,7 @@ public final class MultipleChoicePaneController
 		dataPaneController = new DataPaneController();
 		toolbarEventsHandler = new MultipleChoiceToolbarEventHandler();
 		capturingHandler = new GUICapturingHandler(new AnswerPacketHashMap());
+		areaChartController = new AreaChartController();
 
 	}
 
@@ -99,6 +112,7 @@ public final class MultipleChoicePaneController
 	{
 		JFXDepthManager.pop(statusPane);
 		JFXDepthManager.pop(dataPane);
+		JFXDepthManager.pop(areaChartPane);
 	}
 
 	/**
@@ -293,6 +307,93 @@ public final class MultipleChoicePaneController
 		}
 	}
 
+	/**
+	 * 
+	 * The class to control Area Chart.
+	 * 
+	 * @author CSR
+	 *
+	 */
+	public class AreaChartController
+	{
+		private XYChart.Series<Number, Number> seriesA;
+		private XYChart.Series<Number, Number> seriesB;
+		private XYChart.Series<Number, Number> seriesC;
+		private XYChart.Series<Number, Number> seriesD;
+		private XYChart.Series<Number, Number> seriesE;
+		private NumberAxis xAxis;
+		private NumberAxis yAxis;
+
+		public AreaChartController()
+		{
+			creatChart();
+			seriesA = new Series<>();
+			seriesB = new Series<>();
+			seriesC = new Series<>();
+			seriesD = new Series<>();
+			seriesE = new Series<>();
+			seriesA.setName("A");
+			seriesB.setName("B");
+			seriesC.setName("C");
+			seriesD.setName("D");
+			seriesE.setName("E");
+			areaChart.getData().add(seriesA);
+			areaChart.getData().add(seriesB);
+			areaChart.getData().add(seriesC);
+			areaChart.getData().add(seriesD);
+			areaChart.getData().add(seriesE);
+
+		}
+
+		private void creatChart()
+		{
+			xAxis = new NumberAxis();
+			yAxis = new NumberAxis();
+			areaChart = new AreaChart<>(xAxis, yAxis)
+			{
+				@Override
+				protected void dataItemAdded(Series<Number, Number> series, int itemIndex, Data<Number, Number> item)
+				{
+					// Override it so no point mark.
+				}
+			};
+			areaChartPane.getChildren().add(areaChart);
+			AnchorPane.setBottomAnchor(areaChart, 0.0);
+			AnchorPane.setTopAnchor(areaChart, 0.0);
+			AnchorPane.setLeftAnchor(areaChart, 0.0);
+			AnchorPane.setRightAnchor(areaChart, 0.0);
+		}
+
+		/**
+		 * Clear the chart
+		 */
+		public void clear()
+		{
+			seriesA.getData().clear();
+			seriesB.getData().clear();
+			seriesC.getData().clear();
+			seriesD.getData().clear();
+			seriesE.getData().clear();
+		}
+
+		/**
+		 * Update the area chart.
+		 * 
+		 * @param stats
+		 *            the hashMap stats contains answers
+		 */
+		public void update(AnswerStats stats)
+		{
+			int resCount = stats.getNumsTotalPacketRecieved();
+			seriesA.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsA()));
+			seriesB.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsB()));
+			seriesC.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsC()));
+			seriesD.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsD()));
+			seriesE.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsE()));
+		}
+
+	}
+
 	private class GUICapturingHandler extends CaptureHandler
 	{
 		public GUICapturingHandler(AnswerPacketHashMap hashMap)
@@ -306,8 +407,10 @@ public final class MultipleChoicePaneController
 			super.onReceivedPacketEvent(packetEvent);
 			Platform.runLater(() ->
 			{
-				// TODO: Add GUI changes here.
-				dataPaneController.update(hashMap.getAnswerStats());
+				AnswerStats stats = hashMap.getAnswerStats();
+				// Add GUI changes here.
+				dataPaneController.update(stats);
+				areaChartController.update(stats);
 			});
 		}
 	}
@@ -322,13 +425,16 @@ public final class MultipleChoicePaneController
 			if (emulator != null && emulator.getMode() == EmulatorModes.STANDBY)
 			{
 				primaryViewController.showProgressBar();
+				AnswerStats stats = capturingHandler.getHashMap().getAnswerStats();
+				// Update
+				dataPaneController.update(stats);
+				areaChartController.update(stats);
 				(new Thread(() ->
 				{
 					emulator.startCapture(capturingHandler);
 					Platform.runLater(() ->
 					{
 						primaryViewController.hideProgressBar();
-						dataPaneController.update(capturingHandler.getHashMap().getAnswerStats());
 						statusPaneController.setCapturing();
 					});
 
@@ -362,19 +468,20 @@ public final class MultipleChoicePaneController
 		@Override
 		public void OnActionButtonStop(ActionEvent e, JFXButton stopButton)
 		{
-			capturingHandler.getHashMap().clear();
-			statusPaneController.setReady();
-			primaryViewController.getStartToggleNode().setSelected(false);
+
 			if (emulator != null && emulator.getMode() != EmulatorModes.STANDBY)
 			{
 				primaryViewController.showProgressBar();
 				(new Thread(() ->
 				{
-					emulator.stopAndGoStandby();;
+					emulator.stopAndGoStandby();
 					Platform.runLater(() ->
 					{
 						primaryViewController.hideProgressBar();
-
+						capturingHandler.getHashMap().clear();
+						areaChartController.clear();
+						statusPaneController.setReady();
+						primaryViewController.getStartToggleNode().setSelected(false);
 					});
 					System.gc();
 				})).start();
@@ -387,8 +494,12 @@ public final class MultipleChoicePaneController
 		{
 			capturingHandler.getHashMap().clear();
 			dataPaneController.initialize();
+			areaChartController.clear();
+			areaChartController.update(capturingHandler.getHashMap().getAnswerStats());
+
 			System.gc();
 		}
 
 	}
+
 }
