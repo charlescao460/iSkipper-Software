@@ -412,6 +412,8 @@ public final class MultipleChoicePaneController
 	public class TabPaneController
 	{
 		private BarChart<String, Number> barChart;
+		private CategoryAxis barChartXAxis;
+		private NumberAxis barChartYAxis;
 		private Series<String, Number> seriesA;
 		private Series<String, Number> seriesB;
 		private Series<String, Number> seriesC;
@@ -424,18 +426,110 @@ public final class MultipleChoicePaneController
 		private static final String LETTER_D = "D";
 		private static final String LETTER_E = "E";
 
-		// TODO
+		@SuppressWarnings("unchecked")
 		public TabPaneController()
 		{
 			// Create component
 			Tab barChartTab = new Tab("Bar Chart");
 			Tab pieChartTab = new Tab("Pie Chart");
-			barChart = new BarChart<String, Number>(new CategoryAxis(), new NumberAxis());
+			// Bar Chart
+			barChartXAxis = new CategoryAxis();
+			barChartYAxis = new NumberAxis();
+			barChart = new BarChart<String, Number>(barChartXAxis, barChartYAxis);
+			barChart.setCategoryGap(0.0);
+			barChart.setBarGap(0.0);
+
+			// Pie Chart
 			pieChart = new PieChart();
 			barChartTab.setContent(barChart);
 			pieChartTab.setContent(pieChart);
 			tabPane.getTabs().addAll(barChartTab, pieChartTab);
-			// Creat data object
+			// Create data object
+			seriesA = new Series<>();
+			seriesB = new Series<>();
+			seriesC = new Series<>();
+			seriesD = new Series<>();
+			seriesE = new Series<>();
+			seriesA.setName(LETTER_A);
+			seriesB.setName(LETTER_B);
+			seriesC.setName(LETTER_C);
+			seriesD.setName(LETTER_D);
+			seriesE.setName(LETTER_E);
+			seriesA.getData().add(new XYChart.Data<>(LETTER_A, 0));
+			seriesB.getData().add(new XYChart.Data<>(LETTER_B, 0));
+			seriesC.getData().add(new XYChart.Data<>(LETTER_C, 0));
+			seriesD.getData().add(new XYChart.Data<>(LETTER_D, 0));
+			seriesE.getData().add(new XYChart.Data<>(LETTER_E, 0));
+			// Add to charts
+			barChart.getData().addAll(seriesA, seriesB, seriesC, seriesD, seriesE);
+			pieChart.getData().addAll(new PieChart.Data(LETTER_A, 0), new PieChart.Data(LETTER_B, 0),
+					new PieChart.Data(LETTER_C, 0), new PieChart.Data(LETTER_D, 0), new PieChart.Data(LETTER_E, 0));
+
+		}
+
+		public void clear()
+		{
+			seriesA.getData().get(0).setYValue(0);
+			seriesB.getData().get(0).setYValue(0);
+			seriesC.getData().get(0).setYValue(0);
+			seriesD.getData().get(0).setYValue(0);
+			seriesE.getData().get(0).setYValue(0);
+			for (PieChart.Data data : pieChart.getData())
+			{
+				switch (data.getName())
+				{
+				case LETTER_A:
+					data.setPieValue(0.0);
+					break;
+				case LETTER_B:
+					data.setPieValue(0.0);
+					break;
+				case LETTER_C:
+					data.setPieValue(0.0);
+					break;
+				case LETTER_D:
+					data.setPieValue(0.0);
+					break;
+				case LETTER_E:
+					data.setPieValue(0.0);
+					break;
+				}
+			}
+		}
+
+		public void update(AnswerStats stats)
+		{
+			int numsA = stats.getNumsA();
+			int numsB = stats.getNumsB();
+			int numsC = stats.getNumsC();
+			int numsD = stats.getNumsD();
+			int numsE = stats.getNumsE();
+			seriesA.getData().get(0).setYValue(numsA);
+			seriesB.getData().get(0).setYValue(numsB);
+			seriesC.getData().get(0).setYValue(numsC);
+			seriesD.getData().get(0).setYValue(numsD);
+			seriesE.getData().get(0).setYValue(numsE);
+			for (PieChart.Data data : pieChart.getData())
+			{
+				switch (data.getName())
+				{
+				case LETTER_A:
+					data.setPieValue(numsA);
+					break;
+				case LETTER_B:
+					data.setPieValue(numsB);
+					break;
+				case LETTER_C:
+					data.setPieValue(numsC);
+					break;
+				case LETTER_D:
+					data.setPieValue(numsD);
+					break;
+				case LETTER_E:
+					data.setPieValue(numsE);
+					break;
+				}
+			}
 
 		}
 
@@ -458,6 +552,7 @@ public final class MultipleChoicePaneController
 				// Add GUI changes here.
 				dataPaneController.update(stats);
 				areaChartController.update(stats);
+				tabPaneController.update(stats);
 			});
 		}
 	}
@@ -496,7 +591,7 @@ public final class MultipleChoicePaneController
 		@Override
 		public void OnUntoggleStart(ActionEvent e, JFXToggleNode startToggle)
 		{
-			if (emulator != null && emulator.getMode() != EmulatorModes.STANDBY)
+			if (emulator != null)
 			{
 				primaryViewController.showProgressBar();
 				(new Thread(() ->
@@ -527,6 +622,7 @@ public final class MultipleChoicePaneController
 						primaryViewController.hideProgressBar();
 						capturingHandler.getHashMap().clear();
 						areaChartController.clear();
+						tabPaneController.clear();
 						statusPaneController.setReady();
 						primaryViewController.getStartToggleNode().setSelected(false);
 					});
@@ -540,10 +636,15 @@ public final class MultipleChoicePaneController
 		public void OnActionButtonReset(ActionEvent e, JFXButton resetButton)
 		{
 			capturingHandler.getHashMap().clear();
-			dataPaneController.initialize();
-			areaChartController.clear();
-			areaChartController.update(capturingHandler.getHashMap().getAnswerStats());
-
+			AnswerStats stats = capturingHandler.getHashMap().getAnswerStats();
+			Platform.runLater(() ->
+			{
+				dataPaneController.initialize();
+				areaChartController.clear();
+				areaChartController.update(stats);
+				tabPaneController.clear();
+				tabPaneController.update(stats);
+			});
 			System.gc();
 		}
 
