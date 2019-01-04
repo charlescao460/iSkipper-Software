@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXTabPane?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="637.0" prefWidth="956.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="613.0" prefWidth="951.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="609.0" prefWidth="500.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="14.0">
+      <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="600.0" prefWidth="500.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
             <AnchorPane fx:id="statusPane" prefHeight="84.0" prefWidth="351.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
@@ -150,7 +151,16 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="areaChartPane" layoutY="192.0" prefHeight="386.0" prefWidth="500.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <AnchorPane fx:id="areaChartPane" layoutY="192.0" prefHeight="385.0" prefWidth="500.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="534.0" layoutY="15.0" prefHeight="583.0" prefWidth="400.0" AnchorPane.bottomAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <children>
+            <AnchorPane fx:id="tabAnchorPane" prefHeight="300.0" prefWidth="400.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <JFXTabPane fx:id="tabPane" layoutX="70.0" layoutY="75.0" prefHeight="150.0" prefWidth="260.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
          </children>
       </AnchorPane>
    </children>

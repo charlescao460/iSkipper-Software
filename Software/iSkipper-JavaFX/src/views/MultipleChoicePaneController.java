@@ -6,6 +6,7 @@ package views;
 import java.util.ArrayList;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXToggleNode;
 import com.jfoenix.effects.JFXDepthManager;
 
@@ -17,10 +18,14 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.AreaChart;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
 import support.AnswerPacketHashMap;
@@ -95,6 +100,15 @@ public final class MultipleChoicePaneController
 
 	private AreaChartController areaChartController;
 
+	/************* Tab Pane *****************/
+	@FXML
+	private AnchorPane tabAnchorPane;
+
+	@FXML
+	private JFXTabPane tabPane;
+
+	private TabPaneController tabPaneController;
+
 	/************* Functions *****************/
 	@FXML
 	private void initialize()
@@ -105,7 +119,7 @@ public final class MultipleChoicePaneController
 		toolbarEventsHandler = new MultipleChoiceToolbarEventHandler();
 		capturingHandler = new GUICapturingHandler(new AnswerPacketHashMap());
 		areaChartController = new AreaChartController();
-
+		tabPaneController = new TabPaneController();
 	}
 
 	private void drawDepthShadow()
@@ -113,6 +127,7 @@ public final class MultipleChoicePaneController
 		JFXDepthManager.pop(statusPane);
 		JFXDepthManager.pop(dataPane);
 		JFXDepthManager.pop(areaChartPane);
+		JFXDepthManager.pop(tabAnchorPane);
 	}
 
 	/**
@@ -390,6 +405,38 @@ public final class MultipleChoicePaneController
 			seriesC.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsC()));
 			seriesD.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsD()));
 			seriesE.getData().add(new XYChart.Data<Number, Number>(resCount, stats.getNumsE()));
+		}
+
+	}
+
+	public class TabPaneController
+	{
+		private BarChart<String, Number> barChart;
+		private Series<String, Number> seriesA;
+		private Series<String, Number> seriesB;
+		private Series<String, Number> seriesC;
+		private Series<String, Number> seriesD;
+		private Series<String, Number> seriesE;
+		private PieChart pieChart;
+		private static final String LETTER_A = "A";
+		private static final String LETTER_B = "B";
+		private static final String LETTER_C = "C";
+		private static final String LETTER_D = "D";
+		private static final String LETTER_E = "E";
+
+		// TODO
+		public TabPaneController()
+		{
+			// Create component
+			Tab barChartTab = new Tab("Bar Chart");
+			Tab pieChartTab = new Tab("Pie Chart");
+			barChart = new BarChart<String, Number>(new CategoryAxis(), new NumberAxis());
+			pieChart = new PieChart();
+			barChartTab.setContent(barChart);
+			pieChartTab.setContent(pieChart);
+			tabPane.getTabs().addAll(barChartTab, pieChartTab);
+			// Creat data object
+
 		}
 
 	}
