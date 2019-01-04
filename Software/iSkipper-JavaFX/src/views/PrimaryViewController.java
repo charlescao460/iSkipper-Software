@@ -30,6 +30,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -172,6 +173,7 @@ public final class PrimaryViewController
 	{
 		rawOutputDialog = new TextDialog("i>Skipper - Raw Output",
 				this.getClass().getResource("/css/application.css").toExternalForm());
+		rawOutputDialog.getStage().getIcons().add(new Image(this.getClass().getResourceAsStream("/resource/icon.png")));
 		System.setOut(new DialogPrintStream(System.out, rawOutputDialog));
 		rawToggle.setOnAction(e ->
 		{

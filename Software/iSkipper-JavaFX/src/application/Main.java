@@ -11,6 +11,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import views.PrimaryViewController;
@@ -45,6 +46,7 @@ public class Main extends Application
 		stage.setScene(scene);
 		stage.setTitle("i>Skipper");
 		stage.setResizable(isResizable);
+		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/resource/icon.png")));
 		stage.show();
 	}
 

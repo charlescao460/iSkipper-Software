@@ -136,4 +136,12 @@ public class TextDialog
 		return decorator;
 	}
 
+	/**
+	 * @return the stage
+	 */
+	public Stage getStage()
+	{
+		return stage;
+	}
+
 }
