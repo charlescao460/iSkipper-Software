@@ -21,9 +21,8 @@ public class Main extends Application
 	private Stage stage;
 	private JFXDecorator decorator;
 	private Pane selectPortsPane;
-	private Scene selectPortsscene;
+	private Scene scene;
 	private Pane primaryViewPane;
-	private Scene primaryViewScene;
 
 	@Override
 	public void start(Stage primaryStage)
@@ -34,7 +33,7 @@ public class Main extends Application
 			loadSelectPortsView();
 			initializeDecorator(selectPortsPane);
 			initializeSelectPortsScene();
-			initializeStage(selectPortsscene, false);
+			initializeStage(scene, false);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -51,8 +50,8 @@ public class Main extends Application
 
 	private void initializeSelectPortsScene()
 	{
-		selectPortsscene = new Scene(decorator);
-		selectPortsscene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
+		scene = new Scene(decorator);
+		scene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
 	}
 
 	private void loadSelectPortsView() throws IOException
@@ -74,11 +73,8 @@ public class Main extends Application
 			JFXButton fullScreenButton = (JFXButton) fullScreenButtonField.get(decorator);
 			fullScreenButton.setDisable(true);
 			fullScreenButton.setVisible(false);
-			// Disable the maximize button through reflection.
-			Field maxButtonField = JFXDecorator.class.getDeclaredField("btnMax");
-			maxButtonField.setAccessible(true);
-			JFXButton maxButton = (JFXButton) maxButtonField.get(decorator);
-			maxButton.setDisable(true);;
+			// Disable the maximize button
+			setMaximizeButoonEnable(false);
 		} catch (Exception e)
 		{
 			e.printStackTrace();
@@ -89,6 +85,20 @@ public class Main extends Application
 			Platform.exit();
 			System.exit(0);
 		});
+	}
+
+	private void setMaximizeButoonEnable(boolean isEnable)
+	{
+		try
+		{
+			Field maxButtonField = JFXDecorator.class.getDeclaredField("btnMax");
+			maxButtonField.setAccessible(true);
+			JFXButton maxButton = (JFXButton) maxButtonField.get(decorator);
+			maxButton.setDisable(!isEnable);;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public void showPrimaryView(Emulator emulator)
@@ -109,11 +119,10 @@ public class Main extends Application
 			e.printStackTrace();
 			return;
 		}
-		stage = new Stage();
-		initializeDecorator(primaryViewPane);
-		primaryViewScene = new Scene(decorator);
-		primaryViewScene.getStylesheets().add(this.getClass().getResource("/css/application.css").toExternalForm());
-		initializeStage(primaryViewScene, true);
+		decorator.setContent(primaryViewPane);
+		setMaximizeButoonEnable(true);
+		stage.show();
+		stage.setResizable(true);
 	}
 
 	public static void main(String[] args)
