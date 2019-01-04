@@ -16,7 +16,9 @@ import com.jfoenix.controls.JFXToolbar;
 import com.jfoenix.svg.SVGGlyph;
 import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 
+import application.utils.DialogPrintStream;
 import application.utils.FocusOnMouse;
+import application.utils.TextDialog;
 import emulator.Emulator;
 import javafx.animation.Transition;
 import javafx.collections.FXCollections;
@@ -83,6 +85,8 @@ public final class PrimaryViewController
 
 	private Emulator emulator;
 
+	private TextDialog rawOutputDialog;
+
 	private static final double SVG_ICON_RATIO = 0.6;
 
 	private final static String ITEM_STRING_MULTIPLE_CHOICE = "Multiple Choice";
@@ -97,6 +101,7 @@ public final class PrimaryViewController
 		initializeHamburger();
 		initializeListView();
 		initializeDrawer();
+		initilaizeRawToggle();
 		setSvgIcons();
 		applyFocusOnMouse();
 		// Load content into PrimaryView
@@ -160,6 +165,25 @@ public final class PrimaryViewController
 			final Transition animation = hamburger.getAnimation();
 			animation.setRate(-1);
 			animation.play();
+		});
+	}
+
+	private void initilaizeRawToggle()
+	{
+		rawOutputDialog = new TextDialog("i>Skipper - Raw Output",
+				this.getClass().getResource("/css/application.css").toExternalForm());
+		System.setOut(new DialogPrintStream(System.out, rawOutputDialog));
+		rawToggle.setOnAction(e ->
+		{
+			if (rawToggle.isSelected())
+				rawOutputDialog.show();
+			else
+				rawOutputDialog.hide();
+		});
+		rawOutputDialog.getDecorator().setOnCloseButtonAction(() ->
+		{
+			rawToggle.setSelected(false);
+			rawOutputDialog.hide();
 		});
 	}
 
