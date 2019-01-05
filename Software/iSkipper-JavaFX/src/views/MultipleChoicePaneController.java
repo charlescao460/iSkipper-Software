@@ -434,6 +434,7 @@ public final class MultipleChoicePaneController
 			Tab pieChartTab = new Tab("Pie Chart");
 			// Bar Chart
 			barChartXAxis = new CategoryAxis();
+			barChartXAxis.setAnimated(false);
 			barChartYAxis = new NumberAxis();
 			barChart = new BarChart<String, Number>(barChartXAxis, barChartYAxis);
 			barChart.setCategoryGap(0.0);

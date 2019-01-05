@@ -155,17 +155,22 @@ public final class PrimaryViewController
 	{
 		drawer.setOverLayVisible(false);
 		drawer.setSidePane(listView);
+		drawer.toBack();
 		drawer.setOnDrawerOpening(e ->
 		{
 			final Transition animation = hamburger.getAnimation();
 			animation.setRate(1);
+			mainPane.setEffect(new javafx.scene.effect.BoxBlur(5, 5, 10));
+			drawer.toFront();
 			animation.play();
 		});
 		drawer.setOnDrawerClosing(e ->
 		{
 			final Transition animation = hamburger.getAnimation();
 			animation.setRate(-1);
+			mainPane.setEffect(null);
 			animation.play();
+			drawer.toBack();
 		});
 	}
 

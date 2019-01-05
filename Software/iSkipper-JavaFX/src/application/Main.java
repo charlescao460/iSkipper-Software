@@ -25,6 +25,9 @@ public class Main extends Application
 	private Scene scene;
 	private Pane primaryViewPane;
 
+	private static final double STAGE_MIN_HEIGHT_PADDING = 50.0;
+	private static final double STAGE_MIN_WIDTH_PADDING = 10.0;
+
 	@Override
 	public void start(Stage primaryStage)
 	{
@@ -47,6 +50,11 @@ public class Main extends Application
 		stage.setTitle("i>Skipper");
 		stage.setResizable(isResizable);
 		stage.getIcons().add(new Image(this.getClass().getResourceAsStream("/resource/icon.png")));
+		stage.setOnCloseRequest(e ->
+		{
+			Platform.exit();
+			System.exit(0);
+		});
 		stage.show();
 	}
 
@@ -63,6 +71,7 @@ public class Main extends Application
 		selectPortsPane = loader.load();
 		SelectPortsViewController controller = loader.getController();
 		controller.setMainClass(this);
+
 	}
 
 	private void initializeDecorator(Pane pane)
@@ -124,6 +133,8 @@ public class Main extends Application
 		decorator.setContent(primaryViewPane);
 		setMaximizeButoonEnable(true);
 		stage.show();
+		stage.setMinHeight(primaryViewPane.getMinHeight() + STAGE_MIN_HEIGHT_PADDING);
+		stage.setMinWidth(primaryViewPane.getMinWidth() + STAGE_MIN_WIDTH_PADDING);
 		stage.setResizable(true);
 	}
 
