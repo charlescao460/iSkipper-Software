@@ -465,7 +465,31 @@ public final class MultipleChoicePaneController
 			};
 			barChart.setLegendVisible(false);
 			// Pie Chart
-			pieChart = new PieChart();
+			pieChart = new PieChart()
+			{
+				@Override
+				protected void layoutChartChildren(double top, double left, double contentWidth, double contentHeight)
+				{
+					super.layoutChartChildren(top, left, contentWidth, contentHeight);
+					if (getLabelsVisible())
+					{
+						double sum = getData().stream().mapToDouble(d -> d.getPieValue()).sum();
+						getData().forEach(d ->
+						{
+							this.lookupAll(".chart-pie-label").forEach(l ->
+							{
+								Text text = (Text) l;
+								if (text.getText().contains((d.getName())))
+								{
+									text.setText(d.getName() + ", " + String.format("%.02f%%(%d)",
+											d.getPieValue() / sum * 100.0, (int) d.getPieValue()));
+								}
+							});
+						});
+					}
+
+				}
+			};
 			barChartTab.setContent(barChart);
 			pieChartTab.setContent(pieChart);
 			tabPane.getTabs().addAll(barChartTab, pieChartTab);
