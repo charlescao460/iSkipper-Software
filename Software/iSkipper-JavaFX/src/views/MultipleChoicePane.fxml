@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTabPane?>
+<?import com.jfoenix.controls.JFXToggleButton?>
+<?import com.jfoenix.controls.JFXTreeTableView?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="613.0" prefWidth="951.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" style="-fx-background-color: #DDDDDD;" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="600.0" prefWidth="500.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="670.0" prefWidth="500.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
             <AnchorPane fx:id="statusPane" prefHeight="84.0" prefWidth="351.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
@@ -151,14 +157,71 @@
                   </VBox>
                </children>
             </AnchorPane>
-            <AnchorPane fx:id="areaChartPane" layoutY="192.0" prefHeight="385.0" prefWidth="500.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+            <AnchorPane fx:id="areaChartPane" layoutY="179.0" prefHeight="477.0" prefWidth="500.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
          </children>
       </AnchorPane>
-      <AnchorPane layoutX="534.0" layoutY="15.0" prefHeight="583.0" prefWidth="400.0" AnchorPane.bottomAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <AnchorPane layoutX="534.0" layoutY="15.0" prefHeight="670.0" prefWidth="400.0" AnchorPane.topAnchor="15.0">
          <children>
-            <AnchorPane fx:id="tabAnchorPane" prefHeight="300.0" prefWidth="400.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <AnchorPane fx:id="tabAnchorPane" prefHeight="305.0" prefWidth="400.0" style="-fx-background-color: WHITE;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
-                  <JFXTabPane fx:id="tabPane" layoutX="70.0" layoutY="75.0" prefHeight="150.0" prefWidth="260.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <JFXTabPane fx:id="tabPane" layoutX="70.0" layoutY="75.0" prefHeight="303.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children>
+            </AnchorPane>
+            <AnchorPane fx:id="sendingPane" layoutY="316.0" prefHeight="342.0" prefWidth="400.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+               <children>
+                  <Label layoutX="84.0" rotate="90.0" text="Repeat Times" textFill="#888888" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                  <VBox layoutX="2.0" layoutY="11.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="340.0" prefWidth="85.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0">
+                     <children>
+                        <JFXButton fx:id="sendingButton" prefHeight="32.0" prefWidth="136.0" style="-fx-background-color: #57b757;" text="Send" textFill="WHITE" />
+                        <JFXButton fx:id="stopSendingButton" prefHeight="32.0" prefWidth="99.0" style="-fx-background-color: #f3622d;" text="Stop" textFill="WHITE">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </JFXButton>
+                        <AnchorPane prefHeight="58.0" prefWidth="95.0">
+                           <children>
+                              <Label alignment="CENTER" text="Auto-select" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <JFXToggleButton fx:id="autoSelectToggle" maxHeight="-Infinity" prefHeight="58.0" prefWidth="43.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </AnchorPane>
+                        <AnchorPane prefHeight="58.0" prefWidth="32.0">
+                           <children>
+                              <Label alignment="CENTER" text="Send List  " AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                              <JFXToggleButton fx:id="sendListToggle" prefHeight="58.0" prefWidth="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                           </children>
+                        </AnchorPane>
+                        <JFXRadioButton fx:id="sendingRadioA" prefHeight="18.0" prefWidth="120.0" text="A">
+                           <VBox.margin>
+                              <Insets left="20.0" />
+                           </VBox.margin>
+                        </JFXRadioButton>
+                        <JFXRadioButton fx:id="sendingRadioB" prefHeight="18.0" prefWidth="106.0" text="B">
+                           <VBox.margin>
+                              <Insets left="20.0" top="10.0" />
+                           </VBox.margin>
+                        </JFXRadioButton>
+                        <JFXRadioButton fx:id="sendingRadioC" prefHeight="18.0" prefWidth="128.0" text="C">
+                           <VBox.margin>
+                              <Insets left="20.0" top="10.0" />
+                           </VBox.margin>
+                        </JFXRadioButton>
+                        <JFXRadioButton fx:id="sendingRadioD" prefHeight="18.0" prefWidth="118.0" text="D">
+                           <VBox.margin>
+                              <Insets left="20.0" top="10.0" />
+                           </VBox.margin>
+                        </JFXRadioButton>
+                        <JFXRadioButton fx:id="sendingRadioE" prefHeight="18.0" prefWidth="113.0" text="E">
+                           <VBox.margin>
+                              <Insets left="20.0" top="10.0" />
+                           </VBox.margin>
+                        </JFXRadioButton>
+                     </children>
+                  </VBox>
+                  <JFXTreeTableView fx:id="treeTableView" layoutX="180.0" layoutY="-25.0" prefWidth="260.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                  <JFXSlider fx:id="sendingSlider" blockIncrement="1.0" indicatorPosition="RIGHT" layoutX="99.0" layoutY="10.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" orientation="VERTICAL" prefHeight="330.0" prefWidth="24.0" showTickMarks="true" value="1.0" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>
          </children>

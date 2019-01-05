@@ -6,8 +6,13 @@ package views;
 import java.util.ArrayList;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
+import com.jfoenix.controls.JFXToggleButton;
 import com.jfoenix.controls.JFXToggleNode;
+import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.jfoenix.effects.JFXDepthManager;
 
 import device.ReceivedPacketEvent;
@@ -15,9 +20,12 @@ import emulator.Emulator;
 import emulator.EmulatorModes;
 import handler.CaptureHandler;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -27,12 +35,14 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import support.Answer;
 import support.AnswerPacketHashMap;
 import support.AnswerPacketHashMap.AnswerStats;
 import support.IClickerChannel;
@@ -116,7 +126,44 @@ public final class MultipleChoicePaneController
 
 	/************* Sending Pane *****************/
 	@FXML
-	AnchorPane sendingPane;
+	private AnchorPane sendingPane;
+
+	@FXML
+	private JFXTreeTableView<SendingPaneController.IDTreeObject> treeTableView;
+
+	@FXML
+	private JFXButton sendingButton;
+
+	@FXML
+	private JFXButton stopSendingButton;
+
+	@FXML
+	private JFXToggleButton autoSelectToggle;
+
+	@FXML
+	private JFXToggleButton sendListToggle;
+
+	@FXML
+	private JFXSlider sendingSlider;
+
+	@FXML
+	private JFXRadioButton sendingRadioA;
+
+	@FXML
+	private JFXRadioButton sendingRadioB;
+
+	@FXML
+	private JFXRadioButton sendingRadioC;
+
+	@FXML
+	private JFXRadioButton sendingRadioD;
+
+	@FXML
+	private JFXRadioButton sendingRadioE;
+
+	private ToggleGroup sendingToggleGroup;
+
+	private SendingPaneController sendingPaneController;
 
 	/************* Functions *****************/
 	@FXML
@@ -129,6 +176,7 @@ public final class MultipleChoicePaneController
 		capturingHandler = new GUICapturingHandler(new AnswerPacketHashMap());
 		areaChartController = new AreaChartController();
 		tabPaneController = new TabPaneController();
+		sendingPaneController = new SendingPaneController();
 	}
 
 	private void drawDepthShadow()
@@ -618,6 +666,108 @@ public final class MultipleChoicePaneController
 
 	}
 
+	public class SendingPaneController
+	{
+		// TODO
+		public SendingPaneController()
+		{
+			initializeRadios();
+			initializeAutoSelectToggle();
+		}
+
+		private void initializeRadios()
+		{
+			// Binding in group
+			sendingToggleGroup = new ToggleGroup();
+			sendingRadioA.setToggleGroup(sendingToggleGroup);
+			sendingRadioB.setToggleGroup(sendingToggleGroup);
+			sendingRadioC.setToggleGroup(sendingToggleGroup);
+			sendingRadioD.setToggleGroup(sendingToggleGroup);
+			sendingRadioE.setToggleGroup(sendingToggleGroup);
+			// Set colors
+			sendingRadioA.setStyle(
+					"-fx-text-fill: #f3622d;" + "-jfx-selected-color: #f3622d;" + "-jfx-unselected-color: #f3622d;");
+			sendingRadioB.setStyle(
+					"-fx-text-fill: #fba71b;" + "-jfx-selected-color: #fba71b;" + "-jfx-unselected-color: #fba71b;");
+			sendingRadioC.setStyle(
+					"-fx-text-fill: #57b757;" + "-jfx-selected-color: #57b757;" + "-jfx-unselected-color: #57b757;");
+			sendingRadioD.setStyle(
+					"-fx-text-fill: #41a9c9;" + "-jfx-selected-color: #41a9c9;" + "-jfx-unselected-color: #41a9c9;");
+			sendingRadioE.setStyle(
+					"-fx-text-fill: #4258c9;" + "-jfx-selected-color: #4258c9;" + "-jfx-unselected-color: #4258c9;");
+		}
+
+		private void initializeAutoSelectToggle()
+		{
+			autoSelectToggle.setOnAction(e ->
+			{
+				if (autoSelectToggle.isSelected())
+				{
+					sendingToggleGroup.getToggles().forEach(t -> ((Node) t).setDisable(true));
+				} else
+				{
+					sendingToggleGroup.getToggles().forEach(t -> ((Node) t).setDisable(false));
+				}
+			});
+			autoSelectToggle.setSelected(true);
+			autoSelectToggle.getOnAction().handle(null);// Disable all in default
+		}
+
+		public void update(AnswerStats stats)
+		{
+			class Doublet
+			{
+				Answer answer;
+				int count;
+
+				public Doublet(Answer answer, int count)
+				{
+					super();
+					this.answer = answer;
+					this.count = count;
+				}
+			}
+			ArrayList<Doublet> arrayList = new ArrayList<>(5);
+			arrayList.add(new Doublet(Answer.A, stats.getNumsA()));
+			arrayList.add(new Doublet(Answer.B, stats.getNumsB()));
+			arrayList.add(new Doublet(Answer.C, stats.getNumsC()));
+			arrayList.add(new Doublet(Answer.D, stats.getNumsD()));
+			arrayList.add(new Doublet(Answer.E, stats.getNumsE()));
+			arrayList.sort((arg0, arg1) -> arg1.count - arg0.count);// descending order
+			sendingToggleGroup.getToggles().forEach(t ->
+			{
+				JFXRadioButton button = (JFXRadioButton) t;
+				t.setSelected(false);
+				button.setDisable(true);
+				if (button.getText().equals(arrayList.get(0).answer.name()))
+				{
+					button.setDisable(false);
+					button.fire();
+				}
+			});
+		}
+
+		/**
+		 * The class required by JFXTreeTableView
+		 * 
+		 * @author CSR
+		 *
+		 */
+		final class IDTreeObject extends RecursiveTreeObject<IDTreeObject>
+		{
+			StringProperty name;
+			StringProperty id;
+			StringProperty note;
+
+			public IDTreeObject(String name, String id, String note)
+			{
+				this.name = new SimpleStringProperty(name);
+				this.id = new SimpleStringProperty(id);
+				this.note = new SimpleStringProperty(note);
+			}
+		}
+	}
+
 	private class GUICapturingHandler extends CaptureHandler
 	{
 		public GUICapturingHandler(AnswerPacketHashMap hashMap)
@@ -636,6 +786,7 @@ public final class MultipleChoicePaneController
 				dataPaneController.update(stats);
 				areaChartController.update(stats);
 				tabPaneController.update(stats);
+				sendingPaneController.update(stats);
 			});
 		}
 	}
