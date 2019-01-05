@@ -114,6 +114,10 @@ public final class MultipleChoicePaneController
 
 	private TabPaneController tabPaneController;
 
+	/************* Sending Pane *****************/
+	@FXML
+	AnchorPane sendingPane;
+
 	/************* Functions *****************/
 	@FXML
 	private void initialize()
@@ -133,6 +137,7 @@ public final class MultipleChoicePaneController
 		JFXDepthManager.pop(dataPane);
 		JFXDepthManager.pop(areaChartPane);
 		JFXDepthManager.pop(tabAnchorPane);
+		JFXDepthManager.pop(sendingPane);
 	}
 
 	/**
@@ -646,9 +651,13 @@ public final class MultipleChoicePaneController
 			{
 				primaryViewController.showProgressBar();
 				AnswerStats stats = capturingHandler.getHashMap().getAnswerStats();
-				// Update
-				dataPaneController.update(stats);
-				areaChartController.update(stats);
+				Platform.runLater(() ->
+				{
+					startToggle.setDisable(true);
+					// Update
+					dataPaneController.update(stats);
+					areaChartController.update(stats);
+				});
 				(new Thread(() ->
 				{
 					emulator.startCapture(capturingHandler);
@@ -656,6 +665,7 @@ public final class MultipleChoicePaneController
 					{
 						primaryViewController.hideProgressBar();
 						statusPaneController.setCapturing();
+						startToggle.setDisable(false);
 					});
 
 				})).start();
