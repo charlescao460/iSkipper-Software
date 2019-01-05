@@ -17,6 +17,7 @@ import handler.CaptureHandler;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.chart.AreaChart;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
@@ -27,7 +28,11 @@ import javafx.scene.chart.XYChart.Series;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import support.AnswerPacketHashMap;
 import support.AnswerPacketHashMap.AnswerStats;
 import support.IClickerChannel;
@@ -414,11 +419,7 @@ public final class MultipleChoicePaneController
 		private BarChart<String, Number> barChart;
 		private CategoryAxis barChartXAxis;
 		private NumberAxis barChartYAxis;
-		private Series<String, Number> seriesA;
-		private Series<String, Number> seriesB;
-		private Series<String, Number> seriesC;
-		private Series<String, Number> seriesD;
-		private Series<String, Number> seriesE;
+		private Series<String, Number> series;
 		private PieChart pieChart;
 		private static final String LETTER_A = "A";
 		private static final String LETTER_B = "B";
@@ -426,7 +427,6 @@ public final class MultipleChoicePaneController
 		private static final String LETTER_D = "D";
 		private static final String LETTER_E = "E";
 
-		@SuppressWarnings("unchecked")
 		public TabPaneController()
 		{
 			// Create component
@@ -436,45 +436,81 @@ public final class MultipleChoicePaneController
 			barChartXAxis = new CategoryAxis();
 			barChartXAxis.setAnimated(false);
 			barChartYAxis = new NumberAxis();
-			barChart = new BarChart<String, Number>(barChartXAxis, barChartYAxis);
-			barChart.setCategoryGap(0.0);
-			barChart.setBarGap(0.0);
-
+			barChart = new BarChart<String, Number>(barChartXAxis, barChartYAxis)
+			{
+				// Add value texts on the bar
+				@Override
+				protected void layoutPlotChildren()
+				{
+					super.layoutPlotChildren();
+					for (Series<String, Number> series : getData())
+					{
+						for (Data<String, Number> data : series.getData())
+						{
+							StackPane bar = (StackPane) data.getNode();
+							Text text = new Text(String.valueOf(data.getYValue()));
+							text.setFill(Color.WHITE);
+							if (bar.getChildren().isEmpty())
+							{
+								VBox vBox = new VBox();
+								vBox.setAlignment(Pos.TOP_CENTER);
+								bar.getChildren().add(vBox);
+							}
+							VBox vBox = (VBox) bar.getChildren().get(0);
+							vBox.getChildren().clear();
+							vBox.getChildren().add(text);
+						}
+					}
+				}
+			};
+			barChart.setLegendVisible(false);
 			// Pie Chart
 			pieChart = new PieChart();
 			barChartTab.setContent(barChart);
 			pieChartTab.setContent(pieChart);
 			tabPane.getTabs().addAll(barChartTab, pieChartTab);
 			// Create data object
-			seriesA = new Series<>();
-			seriesB = new Series<>();
-			seriesC = new Series<>();
-			seriesD = new Series<>();
-			seriesE = new Series<>();
-			seriesA.setName(LETTER_A);
-			seriesB.setName(LETTER_B);
-			seriesC.setName(LETTER_C);
-			seriesD.setName(LETTER_D);
-			seriesE.setName(LETTER_E);
-			seriesA.getData().add(new XYChart.Data<>(LETTER_A, 0));
-			seriesB.getData().add(new XYChart.Data<>(LETTER_B, 0));
-			seriesC.getData().add(new XYChart.Data<>(LETTER_C, 0));
-			seriesD.getData().add(new XYChart.Data<>(LETTER_D, 0));
-			seriesE.getData().add(new XYChart.Data<>(LETTER_E, 0));
+			series = new Series<>();
+			series.getData().add(new XYChart.Data<>(LETTER_A, 0));
+			series.getData().add(new XYChart.Data<>(LETTER_B, 0));
+			series.getData().add(new XYChart.Data<>(LETTER_C, 0));
+			series.getData().add(new XYChart.Data<>(LETTER_D, 0));
+			series.getData().add(new XYChart.Data<>(LETTER_E, 0));
 			// Add to charts
-			barChart.getData().addAll(seriesA, seriesB, seriesC, seriesD, seriesE);
+			barChart.getData().add(series);
 			pieChart.getData().addAll(new PieChart.Data(LETTER_A, 0), new PieChart.Data(LETTER_B, 0),
 					new PieChart.Data(LETTER_C, 0), new PieChart.Data(LETTER_D, 0), new PieChart.Data(LETTER_E, 0));
-
+			// set bar colors of bar chart
+			barChart.lookup(".data0.chart-bar").setStyle("-fx-bar-fill:#f3622d");
+			barChart.lookup(".data1.chart-bar").setStyle("-fx-bar-fill:#fba71b");
+			barChart.lookup(".data2.chart-bar").setStyle("-fx-bar-fill:#57b757");
+			barChart.lookup(".data3.chart-bar").setStyle("-fx-bar-fill:#41a9c9");
+			barChart.lookup(".data4.chart-bar").setStyle("-fx-bar-fill:#4258c9");
 		}
 
 		public void clear()
 		{
-			seriesA.getData().get(0).setYValue(0);
-			seriesB.getData().get(0).setYValue(0);
-			seriesC.getData().get(0).setYValue(0);
-			seriesD.getData().get(0).setYValue(0);
-			seriesE.getData().get(0).setYValue(0);
+			for (XYChart.Data<String, Number> data : series.getData())
+			{
+				switch (data.getXValue())
+				{
+				case LETTER_A:
+					data.setYValue(0);
+					break;
+				case LETTER_B:
+					data.setYValue(0);
+					break;
+				case LETTER_C:
+					data.setYValue(0);
+					break;
+				case LETTER_D:
+					data.setYValue(0);
+					break;
+				case LETTER_E:
+					data.setYValue(0);
+					break;
+				}
+			}
 			for (PieChart.Data data : pieChart.getData())
 			{
 				switch (data.getName())
@@ -505,11 +541,28 @@ public final class MultipleChoicePaneController
 			int numsC = stats.getNumsC();
 			int numsD = stats.getNumsD();
 			int numsE = stats.getNumsE();
-			seriesA.getData().get(0).setYValue(numsA);
-			seriesB.getData().get(0).setYValue(numsB);
-			seriesC.getData().get(0).setYValue(numsC);
-			seriesD.getData().get(0).setYValue(numsD);
-			seriesE.getData().get(0).setYValue(numsE);
+
+			for (XYChart.Data<String, Number> data : series.getData())
+			{
+				switch (data.getXValue())
+				{
+				case LETTER_A:
+					data.setYValue(numsA);
+					break;
+				case LETTER_B:
+					data.setYValue(numsB);
+					break;
+				case LETTER_C:
+					data.setYValue(numsC);
+					break;
+				case LETTER_D:
+					data.setYValue(numsD);
+					break;
+				case LETTER_E:
+					data.setYValue(numsE);
+					break;
+				}
+			}
 			for (PieChart.Data data : pieChart.getData())
 			{
 				switch (data.getName())
@@ -612,7 +665,7 @@ public final class MultipleChoicePaneController
 		public void OnActionButtonStop(ActionEvent e, JFXButton stopButton)
 		{
 
-			if (emulator != null && emulator.getMode() != EmulatorModes.STANDBY)
+			if (emulator != null)
 			{
 				primaryViewController.showProgressBar();
 				(new Thread(() ->
