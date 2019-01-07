@@ -228,11 +228,75 @@ public class Emulator
 			}
 			System.out.print(packet);
 		});
-		mode = EmulatorModes.BUSY;
+		mode = EmulatorModes.ANSWER;
 		waitForHandler();
 		mode = EmulatorModes.STANDBY;
 		serial.setPacketHandler(handler);
 		return true;
+	}
+
+	/**
+	 * Enter SUBMIT mode, in this mode the device would keep listen serial port for
+	 * input IDs and answers to submit. And write "ACK\n" when one answer is sent.
+	 * The answers and IDs can be sent by {@link #submitAnswer(Answer)} method.
+	 * 
+	 * Call {@link #stopAndGoStandby()} to stop SUBMIT mode.
+	 * 
+	 * @param handler
+	 *            The handler for submit mode.
+	 * @return Whether successfully enter SUBMIT mode.
+	 */
+	public boolean startSubmitMode(final ReceivedPacketHandlerInterface handler)
+	{
+		if (mode != EmulatorModes.STANDBY)
+			return false;
+		if (handler == null)
+			throw new NullPointerException("Handler cannot be null when start submit mode.");
+		serial.writeByte(SerialSymbols.OP_SUBMIT);
+		serial.setPacketHandler(packet ->
+		{
+			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
+			{
+				this.handler = handler;
+				mode = EmulatorModes.SUBMIT;
+				wakeEmulator();
+				return;
+			}
+			System.out.print(packet);
+		});
+		mode = EmulatorModes.BUSY;
+		waitForHandler();
+		if (mode != EmulatorModes.SUBMIT)
+		{
+			this.handler = new PrintHandler();
+			mode = EmulatorModes.STANDBY;
+		}
+		return mode == EmulatorModes.SUBMIT;
+	}
+
+	/**
+	 * Submit answers with specific IDs in SUBMIT mode. Use
+	 * {@link #startSubmitMode(ReceivedPacketHandlerInterface)} to enter SUBMIT
+	 * mode.
+	 * 
+	 * @param id
+	 *            The id of the submitted packet.
+	 * @param answer
+	 *            The answer to submit
+	 */
+	public synchronized void submitInSubmitMode(IClickerID id, Answer answer)
+	{
+
+		if (id == null || answer == null)
+			throw new NullPointerException("ID and Answer cannot be null");
+		if (mode != EmulatorModes.SUBMIT)
+			throw new IllegalStateException("submitInSubmitMode() must be used in SUBMIT mode!");
+		StringBuilder builder = new StringBuilder();
+		// Format: <Answer>,<ID>\0
+		builder.append(answer.toString());
+		builder.append(',');
+		builder.append(id.toString());
+		serial.writeBytes(Transcoding.stringToBytes(builder.toString()));
 	}
 
 	/**
