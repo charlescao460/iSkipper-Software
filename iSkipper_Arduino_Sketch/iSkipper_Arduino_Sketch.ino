@@ -158,6 +158,7 @@ void loop()
 	}
 	case OP_SUBMIT:
 	{
+		Serial.println(RES_SUCCESS);
 		Serial.println(F("Start SUBMIT mode, waiting for input..."));
 
 		//loop for input answers and IDs
