@@ -5,7 +5,7 @@ package emulator;
  *
  *         Same as "SerialSymbols.h" in Arduino file.
  */
-final class SerialSymbols
+public final class SerialSymbols
 {
 	/* Input Command Operation for Arduino */
 	public static final byte OP_COMFIRM_CONNECTION = 0x49;// 'I'

@@ -271,6 +271,7 @@ public class Emulator
 			this.handler = new PrintHandler();
 			mode = EmulatorModes.STANDBY;
 		}
+		serial.setPacketHandler(this.handler);
 		return mode == EmulatorModes.SUBMIT;
 	}
 

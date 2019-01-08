@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXProgressBar?>
 <?import com.jfoenix.controls.JFXRadioButton?>
 <?import com.jfoenix.controls.JFXSlider?>
 <?import com.jfoenix.controls.JFXTabPane?>
@@ -220,7 +221,21 @@
                         </JFXRadioButton>
                      </children>
                   </VBox>
-                  <JFXTreeTableView fx:id="treeTableView" layoutX="180.0" layoutY="-25.0" prefWidth="260.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0" />
+                  <VBox layoutX="135.0" layoutY="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                     <children>
+                        <JFXTreeTableView fx:id="treeTableView" prefHeight="361.0" prefWidth="260.0" />
+                        <HBox prefHeight="0.0" prefWidth="260.0" style="-fx-border-color: #CCCCCC;">
+                           <children>
+                              <JFXProgressBar fx:id="sendingProgressBar" prefHeight="5.0">
+                                 <HBox.margin>
+                                    <Insets top="5.0" />
+                                 </HBox.margin>
+                              </JFXProgressBar>
+                              <Label fx:id="sendingProgressLabel" alignment="CENTER" prefHeight="15.0" prefWidth="55.0" text="00.00%" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
                   <JFXSlider fx:id="sendingSlider" blockIncrement="1.0" indicatorPosition="RIGHT" layoutX="99.0" layoutY="10.0" majorTickUnit="1.0" max="10.0" minorTickCount="0" orientation="VERTICAL" prefHeight="330.0" prefWidth="24.0" showTickMarks="true" value="1.0" AnchorPane.bottomAnchor="10.0" AnchorPane.topAnchor="10.0" />
                </children>
             </AnchorPane>

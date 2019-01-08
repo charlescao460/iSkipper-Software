@@ -111,3 +111,19 @@
 .scroll-pane .corner {
     -fx-background-insets: 0.0;
 }
+
+/*Others */
+.tree-table-cell {
+    -fx-alignment: center ;
+}
+
+.jfx-progress-bar > .bar,
+.jfx-progress-bar:indeterminate > .bar{
+    -fx-background-color: #0F9D58;
+    -fx-padding: 1.5;
+}
+
+.jfx-progress-bar > .secondary-bar,
+.jfx-progress-bar:indeterminate > .secondary-bar{
+    -fx-background-color: rgb(188, 228, 146);
+}

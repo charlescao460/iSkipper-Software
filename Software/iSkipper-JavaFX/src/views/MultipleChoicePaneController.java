@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXDialogLayout;
+import com.jfoenix.controls.JFXProgressBar;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
@@ -30,6 +30,7 @@ import device.ReceivedPacketEvent;
 import emulator.Emulator;
 import emulator.EmulatorModes;
 import handler.CaptureHandler;
+import handler.PrintHandler;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -50,7 +51,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -177,6 +177,12 @@ public final class MultipleChoicePaneController
 
 	@FXML
 	private JFXRadioButton sendingRadioE;
+
+	@FXML
+	private JFXProgressBar sendingProgressBar;
+
+	@FXML
+	private Label sendingProgressLabel;
 
 	private ToggleGroup sendingToggleGroup;
 
@@ -685,12 +691,13 @@ public final class MultipleChoicePaneController
 
 	public class SendingPaneController
 	{
-		private static final double FIXED_TREE_TABLE_CELL_SIZE = 20.0;
+		private static final double FIXED_TREE_TABLE_CELL_SIZE = 30.0;
+		private static final long SUBMIT_WAIT_TIME = 50;
 		private JFXTreeTableColumn<IDTreeObject, String> nameColumn;
 		private JFXTreeTableColumn<IDTreeObject, String> idColumn;
 		private JFXTreeTableColumn<IDTreeObject, String> noteColumn;
-		private JFXTreeTableColumn<IDTreeObject, String> checkBoxColumn;
 		private ObservableList<IDTreeObject> idList;
+		private boolean isCapturing;
 
 		public SendingPaneController()
 		{
@@ -700,6 +707,9 @@ public final class MultipleChoicePaneController
 			initializeSendListToggle();
 			initilaizeTreeTable();
 			initializeSendButton();
+			initializeProgress();
+			initializeStopButton();
+
 		}
 
 		private void initializeRadios()
@@ -753,7 +763,7 @@ public final class MultipleChoicePaneController
 			{
 				if (sendListToggle.isSelected())
 				{
-					sendingSlider.setValue(1);
+					sendingSlider.setValue(5);
 					sendingSlider.setDisable(false);
 				} else
 				{
@@ -765,7 +775,6 @@ public final class MultipleChoicePaneController
 		@SuppressWarnings("unchecked")
 		private void initilaizeTreeTable()
 		{
-			// TODO
 			/************************ Name Column ***********************/
 			nameColumn = new JFXTreeTableColumn<>("Name");
 			nameColumn.setCellValueFactory(param -> param.getValue().getValue().name);
@@ -824,21 +833,16 @@ public final class MultipleChoicePaneController
 			noteColumn = new JFXTreeTableColumn<>("Note");
 			noteColumn.setCellValueFactory(param -> param.getValue().getValue().note);
 			noteColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+			noteColumn.setOnEditCommit(t ->
+			{
+				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().note
+						.set(t.getNewValue());
+				saveTreeTable();
+			});
+
 			noteColumn.setSortable(false);
 
-			/************************ CheckBox Column ***********************/
-			checkBoxColumn = new JFXTreeTableColumn<>();
-			checkBoxColumn.setCellValueFactory(p ->
-			{
-				JFXCheckBox checkBox = new JFXCheckBox();
-				checkBox.setSelected(true);
-				HBox hBox = new HBox(checkBox);
-				p.getValue().setGraphic(hBox);
-				return null;
-			});
-			checkBoxColumn.setPrefWidth(25.0);
-			checkBoxColumn.setSortable(false);
-
+			/************************ Add items ***********************/
 			idList = FXCollections.observableArrayList();
 			idList.add(new IDTreeObject("FIXED ID", emulator == null ? "null" : emulator.getEmulatorID().toString(),
 					"FIXED"));
@@ -850,7 +854,7 @@ public final class MultipleChoicePaneController
 			treeTableView.setRoot(new RecursiveTreeItem<>(idList, RecursiveTreeObject::getChildren));
 			treeTableView.setShowRoot(false);
 			treeTableView.setEditable(true);
-			treeTableView.getColumns().setAll(checkBoxColumn, nameColumn, idColumn, noteColumn);
+			treeTableView.getColumns().setAll(nameColumn, idColumn, noteColumn);
 			treeTableView.setFixedCellSize(FIXED_TREE_TABLE_CELL_SIZE);// Fixed Height
 
 		}
@@ -875,7 +879,7 @@ public final class MultipleChoicePaneController
 			sendingButton.setOnAction(e ->
 			{
 				startSending();
-				boolean isCapturing = primaryViewController.getStartToggleNode().isSelected();
+				isCapturing = primaryViewController.getStartToggleNode().isSelected();
 				if (isCapturing)// If capturing
 				{
 					primaryViewController.getStartToggleNode().fire();
@@ -901,9 +905,75 @@ public final class MultipleChoicePaneController
 
 				} else// Send List
 				{
-					// TODO
+					initializeProgress();
+					double submitSum = 0;
+					for (int i = 0; idColumn.getCellData(i) != null; i++)
+					{
+						submitSum += sendingSlider.getValue();
+					}
+					double fSubmitSum = submitSum;
+					(new Thread(() ->
+					{
+						if (!emulator.isAvailable())
+						{
+							emulator.stopAndGoStandby();
+						}
+						emulator.startSubmitMode(new PrintHandler());
+						double submitCount = 0;
+						for (int indexID = 0; idColumn.getCellData(indexID) != null; indexID++)
+						{
+							for (int i = 0; i < sendingSlider.getValue(); i++)
+							{
+								emulator.submitInSubmitMode(IClickerID.idFromString(idColumn.getCellData(indexID)),
+										Answer.valueOf(
+												((JFXRadioButton) sendingToggleGroup.getSelectedToggle()).getText()));
+								submitCount++;
+								final double dfi = i, fSubmitCount = submitCount;
+								Platform.runLater(() ->
+								{
+									sendingProgressBar.setSecondaryProgress(dfi / sendingSlider.getValue());
+									sendingProgressBar.setProgress(fSubmitCount / fSubmitSum);
+									double progressPercentage = fSubmitCount / fSubmitSum * 100.0;
+									progressPercentage = progressPercentage > 100.0 ? 100.0 : progressPercentage;
+									sendingProgressLabel.setText(String.format("%02.02f%%", progressPercentage));
+								});
+								try
+								{
+									Thread.sleep(SUBMIT_WAIT_TIME);
+								} catch (InterruptedException e1)
+								{
+									e1.printStackTrace();
+								}
+							}
+						}
+						emulator.stopAndGoStandby();
+						Platform.runLater(() ->
+						{
+							endSending(isCapturing);
+						});
+					})).start();
 				}
+			});
+		}
 
+		private void initializeStopButton()
+		{
+			stopSendingButton.setOnAction(e ->
+			{
+				if (sendingButton.isDisable()) // Whether is sending
+				{
+					(new Thread(() ->
+					{
+						if (!emulator.isAvailable())
+							emulator.stopAndGoStandby();// And then the IllegalStateException will end the sending
+														// thread. Not the best way to stop a thread but it works.
+														// Call Thread.interrupted() can't stop it before the exception.
+						Platform.runLater(() ->
+						{
+							endSending(isCapturing);
+						});
+					})).start();
+				}
 			});
 		}
 
@@ -917,6 +987,7 @@ public final class MultipleChoicePaneController
 			primaryViewController.showProgressBar();
 			treeTableView.setEditable(false);
 			sendListToggle.setDisable(true);
+			sendingSlider.setDisable(true);
 		}
 
 		/**
@@ -929,6 +1000,7 @@ public final class MultipleChoicePaneController
 			sendListToggle.setDisable(false);
 			statusPaneController.setReady();
 			primaryViewController.getStartToggleNode().setDisable(false);
+			sendingSlider.setDisable(false);
 			if (resumeCapturing)
 			{
 				toolbarEventsHandler.OnToggleStart(null, primaryViewController.getStartToggleNode());
@@ -937,6 +1009,13 @@ public final class MultipleChoicePaneController
 				sendingButton.setDisable(false);
 			}
 
+		}
+
+		private void initializeProgress()
+		{
+			sendingProgressBar.setProgress(0.0);
+			sendingProgressBar.setSecondaryProgress(0.0);
+			sendingProgressLabel.setText("00.00%");
 		}
 
 		public void update(AnswerStats stats)
@@ -992,6 +1071,7 @@ public final class MultipleChoicePaneController
 				this.note = new SimpleStringProperty(note);
 			}
 		}
+
 	}
 
 	private class GUICapturingHandler extends CaptureHandler
@@ -1090,6 +1170,7 @@ public final class MultipleChoicePaneController
 					emulator.stopAndGoStandby();
 					Platform.runLater(() ->
 					{
+						stopSendingButton.fire();
 						primaryViewController.hideProgressBar();
 						capturingHandler.getHashMap().clear();
 						areaChartController.clear();
