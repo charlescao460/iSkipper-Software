@@ -193,8 +193,7 @@ void loop()
 				continue;
 			}
 			clicker.submitAnswer(arrID, clicker.charAnswer(cAns), false);
-			Serial.print(RES_SUCCESS);
-			Serial.print('\0');
+			Serial.println(RES_SUCCESS);
 		}
 		break;
 	}
