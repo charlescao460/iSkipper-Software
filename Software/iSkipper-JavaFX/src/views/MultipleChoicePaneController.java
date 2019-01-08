@@ -673,6 +673,9 @@ public final class MultipleChoicePaneController
 		{
 			initializeRadios();
 			initializeAutoSelectToggle();
+			initializeSlider();
+			initializeSendListToggle();
+			initializeSendButton();
 		}
 
 		private void initializeRadios()
@@ -684,6 +687,7 @@ public final class MultipleChoicePaneController
 			sendingRadioC.setToggleGroup(sendingToggleGroup);
 			sendingRadioD.setToggleGroup(sendingToggleGroup);
 			sendingRadioE.setToggleGroup(sendingToggleGroup);
+			sendingToggleGroup.selectToggle(sendingRadioA);
 			// Set colors
 			sendingRadioA.setStyle(
 					"-fx-text-fill: #f3622d;" + "-jfx-selected-color: #f3622d;" + "-jfx-unselected-color: #f3622d;");
@@ -711,6 +715,97 @@ public final class MultipleChoicePaneController
 			});
 			autoSelectToggle.setSelected(true);
 			autoSelectToggle.getOnAction().handle(null);// Disable all in default
+		}
+
+		private void initializeSlider()
+		{
+			sendingSlider.setValue(sendingSlider.getMax());
+			sendingSlider.setDisable(true);
+		}
+
+		private void initializeSendListToggle()
+		{
+			sendListToggle.setOnAction(e ->
+			{
+				if (sendListToggle.isSelected())
+				{
+					sendingSlider.setValue(1);
+					sendingSlider.setDisable(false);
+				} else
+				{
+					initializeSlider();
+				}
+			});
+		}
+
+		private void initializeSendButton()
+		{
+			sendingButton.setOnAction(e ->
+			{
+				startSending();
+				boolean isCapturing = primaryViewController.getStartToggleNode().isSelected();
+				if (isCapturing)// If capturing
+				{
+					primaryViewController.getStartToggleNode().fire();
+					primaryViewController.getStartToggleNode().setDisable(true);
+				}
+
+				if (!sendListToggle.isSelected()) // Not send list
+				{
+					(new Thread(() ->
+					{
+						if (!emulator.isAvailable())
+						{
+							emulator.stopAndGoStandby();
+						}
+						emulator.submitAnswer(
+								Answer.valueOf(((JFXRadioButton) sendingToggleGroup.getSelectedToggle()).getText()));
+						Platform.runLater(() ->
+						{
+							endSending(isCapturing);
+
+						});
+
+					})).start();
+
+				} else// Send List
+				{
+					// TODO
+				}
+
+			});
+		}
+
+		/**
+		 * Set all the components to get ready to sending mode.
+		 */
+		private void startSending()
+		{
+			sendingButton.setDisable(true);
+			statusPaneController.setSending();
+			primaryViewController.showProgressBar();
+			treeTableView.setEditable(false);
+			sendListToggle.setDisable(true);
+		}
+
+		/**
+		 * Reset all the components changed by {@link #startSending()}
+		 */
+		private void endSending(boolean resumeCapturing)
+		{
+			primaryViewController.hideProgressBar();
+			treeTableView.setEditable(true);
+			sendListToggle.setDisable(false);
+			statusPaneController.setReady();
+			primaryViewController.getStartToggleNode().setDisable(false);
+			if (resumeCapturing)
+			{
+				toolbarEventsHandler.OnToggleStart(null, primaryViewController.getStartToggleNode());
+			} else
+			{
+				sendingButton.setDisable(false);
+			}
+
 		}
 
 		public void update(AnswerStats stats)
@@ -798,8 +893,12 @@ public final class MultipleChoicePaneController
 		@Override
 		public void OnToggleStart(ActionEvent e, JFXToggleNode startToggle)
 		{
-			if (emulator != null && emulator.getMode() == EmulatorModes.STANDBY)
+			if (emulator != null)
 			{
+				if (emulator.getMode() != EmulatorModes.STANDBY)
+				{
+					emulator.stopAndGoStandby();
+				}
 				primaryViewController.showProgressBar();
 				AnswerStats stats = capturingHandler.getHashMap().getAnswerStats();
 				Platform.runLater(() ->
@@ -817,6 +916,8 @@ public final class MultipleChoicePaneController
 						primaryViewController.hideProgressBar();
 						statusPaneController.setCapturing();
 						startToggle.setDisable(false);
+						startToggle.setSelected(true);
+						sendingButton.setDisable(false);
 					});
 
 				})).start();
@@ -864,6 +965,7 @@ public final class MultipleChoicePaneController
 						tabPaneController.clear();
 						statusPaneController.setReady();
 						primaryViewController.getStartToggleNode().setSelected(false);
+
 					});
 					System.gc();
 				})).start();
