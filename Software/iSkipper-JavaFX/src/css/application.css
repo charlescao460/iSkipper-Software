@@ -14,12 +14,12 @@
 
 .jfx-decorator .resize-border {
     -fx-border-color: -fx-decorator-color;
-    -fx-border-width: 0 4 4 4;
+    -fx-border-width: 0.0 4.0 4.0 4.0;
 }
 
 .jfx-decorator .jfx-decorator-title-container .jfx-decorator-text {
     -fx-fill: WHITE;
-    -fx-font-size: 16;
+    -fx-font-size: 16.0;
 }
 
 
@@ -31,15 +31,15 @@
 
 .jfx-hamburger {
     -fx-padding: 10.0;
-    -fx-spacing: 4px;
+    -fx-spacing: 4.0px;
     -fx-cursor: hand;
 }
 
 .jfx-hamburger StackPane {
-    -fx-pref-width: 30px;
-    -fx-pref-height: 4px;
+    -fx-pref-width: 30.0px;
+    -fx-pref-height: 4.0px;
     -fx-background-color: #FFF;
-    -fx-background-radius: 5px;
+    -fx-background-radius: 5.0px;
 }
 
 /*******************************************************************************
@@ -60,7 +60,7 @@
 }
 
 .scroll-bar:vertical > .increment-button, .scroll-bar:vertical > .decrement-button {
-    -fx-padding: 5 2 5 2;
+    -fx-padding: 5.0 2.0 5.0 2.0;
 }
 
 
@@ -81,16 +81,16 @@
 }
 
 .scroll-bar:horizontal > .increment-button > .increment-arrow {
-    -fx-rotate: 270;
-    -fx-pref-height: 5;
-    -fx-pref-width: 5;
+    -fx-rotate: 270.0;
+    -fx-pref-height: 5.0;
+    -fx-pref-width: 5.0;
 
 }
 
 .scroll-bar:horizontal > .decrement-button > .decrement-arrow {
-    -fx-rotate: 270;
-    -fx-pref-height: 5;
-    -fx-pref-width: 5;
+    -fx-rotate: 270.0;
+    -fx-pref-height: 5.0;
+    -fx-pref-width: 5.0;
 }
 
 /*******************************************************************************
@@ -100,14 +100,14 @@
  ******************************************************************************/
 
 .scroll-pane {
-    -fx-background-insets: 0;
-    -fx-padding: 0;
+    -fx-background-insets: 0.0;
+    -fx-padding: 0.0;
 }
 
 .scroll-pane:focused {
-    -fx-background-insets: 0;
+    -fx-background-insets: 0.0;
 }
 
 .scroll-pane .corner {
-    -fx-background-insets: 0;
+    -fx-background-insets: 0.0;
 }

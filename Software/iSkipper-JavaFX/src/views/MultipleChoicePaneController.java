@@ -5,16 +5,27 @@ package views;
 
 import java.util.ArrayList;
 
+import com.jfoenix.animation.alert.JFXAlertAnimation;
+import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXDialogLayout;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXSlider;
 import com.jfoenix.controls.JFXTabPane;
 import com.jfoenix.controls.JFXToggleButton;
 import com.jfoenix.controls.JFXToggleNode;
+import com.jfoenix.controls.JFXTreeTableColumn;
 import com.jfoenix.controls.JFXTreeTableView;
+import com.jfoenix.controls.RecursiveTreeItem;
+import com.jfoenix.controls.cells.editors.TextFieldEditorBuilder;
+import com.jfoenix.controls.cells.editors.base.GenericEditableTreeTableCell;
 import com.jfoenix.controls.datamodels.treetable.RecursiveTreeObject;
 import com.jfoenix.effects.JFXDepthManager;
 
+import application.utils.preference.SavedID;
+import application.utils.preference.SavedID.SavedIDList;
+import application.utils.preference.UserPreferences;
 import device.ReceivedPacketEvent;
 import emulator.Emulator;
 import emulator.EmulatorModes;
@@ -22,6 +33,8 @@ import handler.CaptureHandler;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
@@ -37,15 +50,19 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import support.Answer;
 import support.AnswerPacketHashMap;
 import support.AnswerPacketHashMap.AnswerStats;
 import support.IClickerChannel;
+import support.IClickerID;
 import views.PrimaryViewController.AbstractPrimaryViewToolbarEventsHandler;
 
 /**
@@ -668,13 +685,20 @@ public final class MultipleChoicePaneController
 
 	public class SendingPaneController
 	{
-		// TODO
+		private static final double FIXED_TREE_TABLE_CELL_SIZE = 20.0;
+		private JFXTreeTableColumn<IDTreeObject, String> nameColumn;
+		private JFXTreeTableColumn<IDTreeObject, String> idColumn;
+		private JFXTreeTableColumn<IDTreeObject, String> noteColumn;
+		private JFXTreeTableColumn<IDTreeObject, String> checkBoxColumn;
+		private ObservableList<IDTreeObject> idList;
+
 		public SendingPaneController()
 		{
 			initializeRadios();
 			initializeAutoSelectToggle();
 			initializeSlider();
 			initializeSendListToggle();
+			initilaizeTreeTable();
 			initializeSendButton();
 		}
 
@@ -738,6 +762,114 @@ public final class MultipleChoicePaneController
 			});
 		}
 
+		@SuppressWarnings("unchecked")
+		private void initilaizeTreeTable()
+		{
+			// TODO
+			/************************ Name Column ***********************/
+			nameColumn = new JFXTreeTableColumn<>("Name");
+			nameColumn.setCellValueFactory(param -> param.getValue().getValue().name);
+			nameColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+			nameColumn.setOnEditCommit(t ->
+			{
+				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().name
+						.set(t.getNewValue());
+				saveTreeTable();
+			});
+			nameColumn.setSortable(false);
+
+			/************************ ID Column ***********************/
+			idColumn = new JFXTreeTableColumn<>("ID");
+			idColumn.setCellValueFactory(param -> param.getValue().getValue().id);
+			idColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+			idColumn.setOnEditCommit(t ->
+			{
+				if (t.getNewValue() == null || t.getNewValue().equals(""))// Delete
+				{
+					for (IDTreeObject id : idList)
+					{
+						if (id.id.getValue().equals(t.getOldValue()))
+						{
+							idList.remove(id);
+							saveTreeTable();
+							return;
+						}
+					}
+				}
+				if (IClickerID.idFromString(t.getNewValue()) == null)
+				{
+					JFXAlert<Void> alert = new JFXAlert<Void>((Stage) rootPane.getScene().getWindow());
+					JFXDialogLayout layout = new JFXDialogLayout();
+					layout.setBody(new Label(
+							"The ID you entered is not valid, please try again.\n(Click anywhere outside this alert to close it.)"));
+					alert.setTitle("Invalid ID");
+					alert.setOverlayClose(true);
+					alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
+					alert.setContent(layout);
+					alert.initModality(Modality.NONE);
+					alert.show();
+					treeTableView.refresh();
+					return;
+				}
+				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().id.set(t.getNewValue());
+				saveTreeTable();
+				if (idColumn.getCellData(t.getTreeTablePosition().getRow() + 1) == null)// if last row
+				{
+					idList.add(new IDTreeObject(null, null, null));
+				}
+			});
+			idColumn.setSortable(false);
+
+			/************************ Note Column ***********************/
+			noteColumn = new JFXTreeTableColumn<>("Note");
+			noteColumn.setCellValueFactory(param -> param.getValue().getValue().note);
+			noteColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
+			noteColumn.setSortable(false);
+
+			/************************ CheckBox Column ***********************/
+			checkBoxColumn = new JFXTreeTableColumn<>();
+			checkBoxColumn.setCellValueFactory(p ->
+			{
+				JFXCheckBox checkBox = new JFXCheckBox();
+				checkBox.setSelected(true);
+				HBox hBox = new HBox(checkBox);
+				p.getValue().setGraphic(hBox);
+				return null;
+			});
+			checkBoxColumn.setPrefWidth(25.0);
+			checkBoxColumn.setSortable(false);
+
+			idList = FXCollections.observableArrayList();
+			idList.add(new IDTreeObject("FIXED ID", emulator == null ? "null" : emulator.getEmulatorID().toString(),
+					"FIXED"));
+			for (SavedID id : UserPreferences.getSavedIDList())
+			{
+				idList.add(new IDTreeObject(id.getName(), id.getId().toString(), id.getNote()));
+			}
+			idList.add(new IDTreeObject(null, null, null));
+			treeTableView.setRoot(new RecursiveTreeItem<>(idList, RecursiveTreeObject::getChildren));
+			treeTableView.setShowRoot(false);
+			treeTableView.setEditable(true);
+			treeTableView.getColumns().setAll(checkBoxColumn, nameColumn, idColumn, noteColumn);
+			treeTableView.setFixedCellSize(FIXED_TREE_TABLE_CELL_SIZE);// Fixed Height
+
+		}
+
+		private void saveTreeTable()
+		{
+			SavedID.SavedIDList toSave = new SavedIDList();
+			for (int i = 1; true; i++)
+			{
+				String strID = idColumn.getCellData(i);
+				if (strID == null)
+					break;
+				String strName = nameColumn.getCellData(i);
+				String strNote = noteColumn.getCellData(i);
+				toSave.add(new SavedID(IClickerID.idFromString(strID), strName, strNote));
+			}
+			UserPreferences.setSavedIDList(toSave);
+		}
+
 		private void initializeSendButton()
 		{
 			sendingButton.setOnAction(e ->
@@ -750,7 +882,7 @@ public final class MultipleChoicePaneController
 					primaryViewController.getStartToggleNode().setDisable(true);
 				}
 
-				if (!sendListToggle.isSelected()) // Not send list
+				if (!sendListToggle.isSelected()) // Not to send list
 				{
 					(new Thread(() ->
 					{
@@ -763,7 +895,6 @@ public final class MultipleChoicePaneController
 						Platform.runLater(() ->
 						{
 							endSending(isCapturing);
-
 						});
 
 					})).start();
