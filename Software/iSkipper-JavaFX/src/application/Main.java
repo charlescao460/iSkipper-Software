@@ -121,6 +121,7 @@ public class Main extends Application
 		loader.setLocation(this.getClass().getResource("/views/PrimaryView.fxml"));
 		PrimaryViewController controller = new PrimaryViewController();
 		controller.setEmulator(emulator);
+		controller.setApplication(this);
 		loader.setController(controller);
 		try
 		{

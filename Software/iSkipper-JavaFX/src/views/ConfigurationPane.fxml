@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="rootPane" prefHeight="700.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane fx:id="leftPane" layoutX="14.0" layoutY="15.0" prefWidth="450.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <children>
+            <AnchorPane layoutX="1.0" prefHeight="228.0" prefWidth="276.0">
+               <children>
+                  <Label layoutY="-2.0" text="Change Channel" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <HBox layoutX="14.0" layoutY="37.0" prefHeight="32.0" prefWidth="137.0" AnchorPane.leftAnchor="8.0">
+                     <children>
+                        <Label alignment="BOTTOM_LEFT" prefHeight="32.0" prefWidth="50.0" text="To:">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <JFXComboBox fx:id="channelComboBox" prefHeight="32.0" prefWidth="64.0" />
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+            <Label layoutY="290.0" prefHeight="28.0" prefWidth="349.0" text="This software is open sources at: " AnchorPane.leftAnchor="5.0">
+               <font>
+                  <Font size="21.0" />
+               </font>
+            </Label>
+            <Hyperlink fx:id="sourceHyperLink" layoutX="1.0" layoutY="318.0" text="Github.com/charlescao460/iSkipper-Software" AnchorPane.leftAnchor="5.0">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Hyperlink>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="rightPane" layoutX="671.0" layoutY="219.0" prefHeight="200.0" prefWidth="450.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+         <children>
+            <AnchorPane fx:id="licensePane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
+            <Label text="Licenses" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+               <font>
+                  <Font size="32.0" />
+               </font>
+            </Label>
+         </children></AnchorPane>
+   </children>
+</AnchorPane>

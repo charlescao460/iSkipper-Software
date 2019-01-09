@@ -918,7 +918,8 @@ public final class MultipleChoicePaneController
 						{
 							emulator.stopAndGoStandby();
 						}
-						emulator.startSubmitMode(new PrintHandler());
+						while (!emulator.startSubmitMode(new PrintHandler()))
+							emulator.stopAndGoStandby();// If user keep click 'stop' button, then this will help
 						double submitCount = 0;
 						for (int indexID = 0; idColumn.getCellData(indexID) != null; indexID++)
 						{
@@ -1000,7 +1001,8 @@ public final class MultipleChoicePaneController
 			sendListToggle.setDisable(false);
 			statusPaneController.setReady();
 			primaryViewController.getStartToggleNode().setDisable(false);
-			sendingSlider.setDisable(false);
+			if (sendListToggle.isSelected())
+				sendingSlider.setDisable(false);
 			if (resumeCapturing)
 			{
 				toolbarEventsHandler.OnToggleStart(null, primaryViewController.getStartToggleNode());

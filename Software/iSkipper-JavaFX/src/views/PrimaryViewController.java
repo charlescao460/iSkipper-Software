@@ -21,6 +21,7 @@ import application.utils.FocusOnMouse;
 import application.utils.TextDialog;
 import emulator.Emulator;
 import javafx.animation.Transition;
+import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -33,7 +34,6 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -88,6 +88,12 @@ public final class PrimaryViewController
 
 	private TextDialog rawOutputDialog;
 
+	private Application application;
+
+	private AnchorPane mutipleChoicePane;
+
+	private AnchorPane configurationPane;
+
 	private static final double SVG_ICON_RATIO = 0.6;
 
 	private final static String ITEM_STRING_MULTIPLE_CHOICE = "Multiple Choice";
@@ -105,6 +111,7 @@ public final class PrimaryViewController
 		initilaizeRawToggle();
 		setSvgIcons();
 		applyFocusOnMouse();
+		loadConfigurationPane();
 		// Load content into PrimaryView
 		loadMutipleChoicePane();
 		setToolbarComponentEventHandlers();
@@ -142,10 +149,10 @@ public final class PrimaryViewController
 			switch (newSelect.getText())
 			{
 			case ITEM_STRING_MULTIPLE_CHOICE:
-				// TODO
+				changeMainPaneContent(mutipleChoicePane);
 				break;
 			case ITEM_STRING_CONFIGURATION:
-				// TODO
+				changeMainPaneContent(configurationPane);
 				break;
 			}
 		});
@@ -281,7 +288,6 @@ public final class PrimaryViewController
 		controller.setEmulator(emulator);
 		controller.setPrimaryViewController(this);
 		loader.setController(controller);
-		Pane mutipleChoicePane;
 		try
 		{
 			mutipleChoicePane = loader.load();
@@ -292,6 +298,24 @@ public final class PrimaryViewController
 		}
 		this.setToolbarEventsHandler(controller.getToolbarEventsHandler());
 
+	}
+
+	private void loadConfigurationPane()
+	{
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(this.getClass().getResource("/views/ConfigurationPane.fxml"));
+		ConfigurationPaneController controller = new ConfigurationPaneController();
+		controller.setEmulator(emulator);
+		controller.setApplication(application);
+		controller.setPrimaryViewController(this);
+		loader.setController(controller);
+		try
+		{
+			configurationPane = loader.load();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void changeMainPaneContent(Node node)
@@ -403,6 +427,23 @@ public final class PrimaryViewController
 	public JFXToggleNode getStartToggleNode()
 	{
 		return startToggle;
+	}
+
+	/**
+	 * @return the application
+	 */
+	public Application getApplication()
+	{
+		return application;
+	}
+
+	/**
+	 * @param application
+	 *            the application to set
+	 */
+	public void setApplication(Application application)
+	{
+		this.application = application;
 	}
 
 }
