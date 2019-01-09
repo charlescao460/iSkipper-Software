@@ -92,6 +92,8 @@ public final class PrimaryViewController
 
 	private AnchorPane mutipleChoicePane;
 
+	private MultipleChoicePaneController multipleChoicePaneController;
+
 	private AnchorPane configurationPane;
 
 	private static final double SVG_ICON_RATIO = 0.6;
@@ -284,10 +286,10 @@ public final class PrimaryViewController
 	{
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(this.getClass().getResource("/views/MultipleChoicePane.fxml"));
-		MultipleChoicePaneController controller = new MultipleChoicePaneController();
-		controller.setEmulator(emulator);
-		controller.setPrimaryViewController(this);
-		loader.setController(controller);
+		multipleChoicePaneController = new MultipleChoicePaneController();
+		multipleChoicePaneController.setEmulator(emulator);
+		multipleChoicePaneController.setPrimaryViewController(this);
+		loader.setController(multipleChoicePaneController);
 		try
 		{
 			mutipleChoicePane = loader.load();
@@ -296,7 +298,7 @@ public final class PrimaryViewController
 		{
 			e.printStackTrace();
 		}
-		this.setToolbarEventsHandler(controller.getToolbarEventsHandler());
+		this.setToolbarEventsHandler(multipleChoicePaneController.getToolbarEventsHandler());
 
 	}
 
@@ -444,6 +446,14 @@ public final class PrimaryViewController
 	public void setApplication(Application application)
 	{
 		this.application = application;
+	}
+
+	/**
+	 * Refresh current content.
+	 */
+	public void refresh()
+	{
+		multipleChoicePaneController.refresh();
 	}
 
 }

@@ -10,8 +10,10 @@ import org.fxmisc.richtext.StyleClassedTextArea;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.effects.JFXDepthManager;
 
+import application.utils.preference.UserPreferences;
 import emulator.Emulator;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
@@ -72,7 +74,27 @@ public final class ConfigurationPaneController
 			channelComboBox.setValue(emulator.getEmulatorChannel());
 		channelComboBox.setOnAction(e ->
 		{
-			// TODO
+			if (channelComboBox.getValue() == null)
+				return;
+			if (primaryViewController.getStartToggleNode().isSelected())
+			{
+				primaryViewController.getStartToggleNode().setSelected(false);
+				primaryViewController.getStartToggleNode().getOnAction().handle(e);
+			}
+			primaryViewController.showProgressBar();
+			(new Thread(() ->
+			{
+				if (!emulator.isAvailable())
+					emulator.stopAndGoStandby();
+				emulator.changeChannel(channelComboBox.getValue());
+				Platform.runLater(() ->
+				{
+					channelComboBox.setValue(emulator.getEmulatorChannel());
+					primaryViewController.hideProgressBar();
+					primaryViewController.refresh();
+				});
+				UserPreferences.setChannel(emulator.getEmulatorChannel());
+			})).start();
 		});
 	}
 

@@ -262,6 +262,14 @@ public final class MultipleChoicePaneController
 	}
 
 	/**
+	 * Refresh status pane
+	 */
+	public void refresh()
+	{
+		statusPaneController.setChannel(emulator.getEmulatorChannel());
+	}
+
+	/**
 	 * 
 	 * The controller of status pane
 	 * 
