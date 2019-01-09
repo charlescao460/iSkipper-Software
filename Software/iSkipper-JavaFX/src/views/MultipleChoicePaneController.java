@@ -890,7 +890,7 @@ public final class MultipleChoicePaneController
 				isCapturing = primaryViewController.getStartToggleNode().isSelected();
 				if (isCapturing)// If capturing
 				{
-					primaryViewController.getStartToggleNode().fire();
+					primaryViewController.getStartToggleNode().setSelected(false);
 					primaryViewController.getStartToggleNode().setDisable(true);
 				}
 

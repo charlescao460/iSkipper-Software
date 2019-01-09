@@ -21,6 +21,7 @@ import application.utils.FocusOnMouse;
 import application.utils.TextDialog;
 import emulator.Emulator;
 import javafx.animation.Transition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,11 +32,14 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.effect.BoxBlur;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Duration;
 
 /**
  * @author CSR
@@ -90,11 +94,17 @@ public final class PrimaryViewController
 
 	private Application application;
 
-	private AnchorPane mutipleChoicePane;
+	private AnchorPane multipleChoicePane;
 
 	private MultipleChoicePaneController multipleChoicePaneController;
 
 	private AnchorPane configurationPane;
+
+	private TranslateTransition moveInTransition;
+
+	private TranslateTransition moveOutTransition;
+
+	private static final double TRANSITION_DURATION = 500.0;
 
 	private static final double SVG_ICON_RATIO = 0.6;
 
@@ -114,8 +124,10 @@ public final class PrimaryViewController
 		setSvgIcons();
 		applyFocusOnMouse();
 		loadConfigurationPane();
+		JFXScrollPane.smoothScrolling(scrollPane);
 		// Load content into PrimaryView
 		loadMutipleChoicePane();
+		initializeTransition();
 		setToolbarComponentEventHandlers();
 	}
 
@@ -151,12 +163,15 @@ public final class PrimaryViewController
 			switch (newSelect.getText())
 			{
 			case ITEM_STRING_MULTIPLE_CHOICE:
-				changeMainPaneContent(mutipleChoicePane);
+				if (!mainPane.getChildren().get(0).equals(multipleChoicePane))
+					switchUsingTransition(multipleChoicePane);
 				break;
 			case ITEM_STRING_CONFIGURATION:
-				changeMainPaneContent(configurationPane);
+				if (!mainPane.getChildren().get(0).equals(configurationPane))
+					switchUsingTransition(configurationPane);
 				break;
 			}
+			drawer.close();
 		});
 	}
 
@@ -169,7 +184,7 @@ public final class PrimaryViewController
 		{
 			final Transition animation = hamburger.getAnimation();
 			animation.setRate(1);
-			mainPane.setEffect(new javafx.scene.effect.BoxBlur(5, 5, 10));
+			mainPane.setEffect(new BoxBlur(5, 5, 10));
 			drawer.toFront();
 			animation.play();
 		});
@@ -292,8 +307,8 @@ public final class PrimaryViewController
 		loader.setController(multipleChoicePaneController);
 		try
 		{
-			mutipleChoicePane = loader.load();
-			changeMainPaneContent(mutipleChoicePane);
+			multipleChoicePane = loader.load();
+			addToMainPaneContent(multipleChoicePane);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -320,16 +335,32 @@ public final class PrimaryViewController
 		}
 	}
 
-	private void changeMainPaneContent(Node node)
+	private void addToMainPaneContent(Node node)
 	{
-		mainPane.getChildren().clear();
 		mainPane.getChildren().add(node);
 		AnchorPane.setBottomAnchor(node, 0.0);
 		AnchorPane.setLeftAnchor(node, 0.0);
 		AnchorPane.setRightAnchor(node, 0.0);
 		AnchorPane.setTopAnchor(node, 0.0);
 
-		JFXScrollPane.smoothScrolling(scrollPane);
+	}
+
+	private void switchUsingTransition(Pane to)
+	{
+		moveOutTransition.setNode(mainPane.getChildren().get(0));
+		moveInTransition.setNode(to);
+		moveOutTransition.setFromX(0);
+		moveInTransition.setFromX(0);
+		moveOutTransition.setByX(((Pane) (moveOutTransition.getNode())).getWidth());
+		moveInTransition.setByX(to.getWidth() * -1.0);// From left
+		moveInTransition.setRate(-1.0);
+		moveInTransition.setOnFinished(e -> mainPane.getChildren().remove(0));
+		moveOutTransition.setOnFinished(e ->
+		{
+			addToMainPaneContent(to);
+			moveInTransition.play();
+		});
+		moveOutTransition.play();
 	}
 
 	private void applyFocusOnMouse()
@@ -339,6 +370,12 @@ public final class PrimaryViewController
 		FocusOnMouse.apply(startToggle);
 		FocusOnMouse.apply(stopButton);
 
+	}
+
+	private void initializeTransition()
+	{
+		moveInTransition = new TranslateTransition(Duration.millis(TRANSITION_DURATION));
+		moveOutTransition = new TranslateTransition(Duration.millis(TRANSITION_DURATION));
 	}
 
 	/**

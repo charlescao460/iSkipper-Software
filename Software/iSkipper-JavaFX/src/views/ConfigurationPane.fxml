@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootPane" prefHeight="700.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane fx:id="rootPane" minWidth="-Infinity" prefHeight="700.0" prefWidth="950.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane fx:id="leftPane" layoutX="14.0" layoutY="15.0" prefWidth="450.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="15.0">
          <children>
@@ -42,7 +42,7 @@
             </Hyperlink>
          </children>
       </AnchorPane>
-      <AnchorPane fx:id="rightPane" layoutX="671.0" layoutY="219.0" prefHeight="200.0" prefWidth="450.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
+      <AnchorPane fx:id="rightPane" layoutX="671.0" layoutY="219.0" prefHeight="670.0" prefWidth="450.0" style="-fx-background-color: WHITE;" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="485.0" AnchorPane.topAnchor="15.0">
          <children>
             <AnchorPane fx:id="licensePane" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="50.0" />
             <Label text="Licenses" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
