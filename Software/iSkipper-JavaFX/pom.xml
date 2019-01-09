@@ -32,6 +32,19 @@
 		</resources>
 		<plugins>
 			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>application.EntryPoint</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+			</plugin>
+			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
 				<configuration>
@@ -52,7 +65,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<mainClass>application.Main</mainClass>
+					<mainClass>application.EntryPoint</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>
