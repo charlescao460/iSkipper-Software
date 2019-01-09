@@ -453,7 +453,7 @@ public final class MultipleChoicePaneController
 		{
 			xAxis = new NumberAxis();
 			yAxis = new NumberAxis();
-			areaChart = new AreaChart<>(xAxis, yAxis)
+			areaChart = new AreaChart<Number, Number>(xAxis, yAxis)
 			{
 				@Override
 				protected void dataItemAdded(Series<Number, Number> series, int itemIndex, Data<Number, Number> item)
@@ -1030,6 +1030,8 @@ public final class MultipleChoicePaneController
 
 		public void update(AnswerStats stats)
 		{
+			if (!autoSelectToggle.isSelected())
+				return;
 			class Doublet
 			{
 				Answer answer;
