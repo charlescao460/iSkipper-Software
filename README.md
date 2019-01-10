@@ -71,6 +71,9 @@ Please note that the iClicker ID is NOT totally random. The last byte of the ID 
 6. Open serial monitor at baudrate `115200`. If you see the output like this `Initialization Complete. Waiting for COM command...`, then congratulations! You have done the hardware/firmware part.
 
 ### Last, Complie the software ###
+
+If you're not interesting in development of this software, you can **skip** following build process and use our binary [release](https://github.com/charlescao460/iSkipper-Software/releases).
+
 **Requirements**
 
 * Java Development Kit (JDK) **11**
