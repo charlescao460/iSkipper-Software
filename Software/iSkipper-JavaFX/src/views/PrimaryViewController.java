@@ -104,7 +104,7 @@ public final class PrimaryViewController
 
 	private TranslateTransition moveOutTransition;
 
-	private static final double TRANSITION_DURATION = 500.0;
+	private static final double TRANSITION_DURATION = 200.0;
 
 	private static final double SVG_ICON_RATIO = 0.6;
 
