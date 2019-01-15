@@ -565,8 +565,7 @@ public final class MultipleChoicePaneController
 								Text text = (Text) l;
 								if (text.getText().contains((d.getName())))
 								{
-									text.setText(d.getName() + ", " + String.format("%.02f%%(%d)",
-											d.getPieValue() / sum * 100.0, (int) d.getPieValue()));
+									text.setText(d.getName() + ", " + String.format("%.02f%%(%d)", d.getPieValue() / sum * 100.0, (int) d.getPieValue()));
 								}
 							});
 						});
@@ -586,8 +585,7 @@ public final class MultipleChoicePaneController
 			series.getData().add(new XYChart.Data<>(LETTER_E, 0));
 			// Add to charts
 			barChart.getData().add(series);
-			pieChart.getData().addAll(new PieChart.Data(LETTER_A, 0), new PieChart.Data(LETTER_B, 0),
-					new PieChart.Data(LETTER_C, 0), new PieChart.Data(LETTER_D, 0), new PieChart.Data(LETTER_E, 0));
+			pieChart.getData().addAll(new PieChart.Data(LETTER_A, 0), new PieChart.Data(LETTER_B, 0), new PieChart.Data(LETTER_C, 0), new PieChart.Data(LETTER_D, 0), new PieChart.Data(LETTER_E, 0));
 			// set bar colors of bar chart
 			barChart.lookup(".data0.chart-bar").setStyle("-fx-bar-fill:#f3622d");
 			barChart.lookup(".data1.chart-bar").setStyle("-fx-bar-fill:#fba71b");
@@ -602,42 +600,42 @@ public final class MultipleChoicePaneController
 			{
 				switch (data.getXValue())
 				{
-				case LETTER_A:
-					data.setYValue(0);
-					break;
-				case LETTER_B:
-					data.setYValue(0);
-					break;
-				case LETTER_C:
-					data.setYValue(0);
-					break;
-				case LETTER_D:
-					data.setYValue(0);
-					break;
-				case LETTER_E:
-					data.setYValue(0);
-					break;
+					case LETTER_A:
+						data.setYValue(0);
+						break;
+					case LETTER_B:
+						data.setYValue(0);
+						break;
+					case LETTER_C:
+						data.setYValue(0);
+						break;
+					case LETTER_D:
+						data.setYValue(0);
+						break;
+					case LETTER_E:
+						data.setYValue(0);
+						break;
 				}
 			}
 			for (PieChart.Data data : pieChart.getData())
 			{
 				switch (data.getName())
 				{
-				case LETTER_A:
-					data.setPieValue(0.0);
-					break;
-				case LETTER_B:
-					data.setPieValue(0.0);
-					break;
-				case LETTER_C:
-					data.setPieValue(0.0);
-					break;
-				case LETTER_D:
-					data.setPieValue(0.0);
-					break;
-				case LETTER_E:
-					data.setPieValue(0.0);
-					break;
+					case LETTER_A:
+						data.setPieValue(0.0);
+						break;
+					case LETTER_B:
+						data.setPieValue(0.0);
+						break;
+					case LETTER_C:
+						data.setPieValue(0.0);
+						break;
+					case LETTER_D:
+						data.setPieValue(0.0);
+						break;
+					case LETTER_E:
+						data.setPieValue(0.0);
+						break;
 				}
 			}
 		}
@@ -654,42 +652,42 @@ public final class MultipleChoicePaneController
 			{
 				switch (data.getXValue())
 				{
-				case LETTER_A:
-					data.setYValue(numsA);
-					break;
-				case LETTER_B:
-					data.setYValue(numsB);
-					break;
-				case LETTER_C:
-					data.setYValue(numsC);
-					break;
-				case LETTER_D:
-					data.setYValue(numsD);
-					break;
-				case LETTER_E:
-					data.setYValue(numsE);
-					break;
+					case LETTER_A:
+						data.setYValue(numsA);
+						break;
+					case LETTER_B:
+						data.setYValue(numsB);
+						break;
+					case LETTER_C:
+						data.setYValue(numsC);
+						break;
+					case LETTER_D:
+						data.setYValue(numsD);
+						break;
+					case LETTER_E:
+						data.setYValue(numsE);
+						break;
 				}
 			}
 			for (PieChart.Data data : pieChart.getData())
 			{
 				switch (data.getName())
 				{
-				case LETTER_A:
-					data.setPieValue(numsA);
-					break;
-				case LETTER_B:
-					data.setPieValue(numsB);
-					break;
-				case LETTER_C:
-					data.setPieValue(numsC);
-					break;
-				case LETTER_D:
-					data.setPieValue(numsD);
-					break;
-				case LETTER_E:
-					data.setPieValue(numsE);
-					break;
+					case LETTER_A:
+						data.setPieValue(numsA);
+						break;
+					case LETTER_B:
+						data.setPieValue(numsB);
+						break;
+					case LETTER_C:
+						data.setPieValue(numsC);
+						break;
+					case LETTER_D:
+						data.setPieValue(numsD);
+						break;
+					case LETTER_E:
+						data.setPieValue(numsE);
+						break;
 				}
 			}
 
@@ -731,16 +729,11 @@ public final class MultipleChoicePaneController
 			sendingRadioE.setToggleGroup(sendingToggleGroup);
 			sendingToggleGroup.selectToggle(sendingRadioA);
 			// Set colors
-			sendingRadioA.setStyle(
-					"-fx-text-fill: #f3622d;" + "-jfx-selected-color: #f3622d;" + "-jfx-unselected-color: #f3622d;");
-			sendingRadioB.setStyle(
-					"-fx-text-fill: #fba71b;" + "-jfx-selected-color: #fba71b;" + "-jfx-unselected-color: #fba71b;");
-			sendingRadioC.setStyle(
-					"-fx-text-fill: #57b757;" + "-jfx-selected-color: #57b757;" + "-jfx-unselected-color: #57b757;");
-			sendingRadioD.setStyle(
-					"-fx-text-fill: #41a9c9;" + "-jfx-selected-color: #41a9c9;" + "-jfx-unselected-color: #41a9c9;");
-			sendingRadioE.setStyle(
-					"-fx-text-fill: #4258c9;" + "-jfx-selected-color: #4258c9;" + "-jfx-unselected-color: #4258c9;");
+			sendingRadioA.setStyle("-fx-text-fill: #f3622d;" + "-jfx-selected-color: #f3622d;" + "-jfx-unselected-color: #f3622d;");
+			sendingRadioB.setStyle("-fx-text-fill: #fba71b;" + "-jfx-selected-color: #fba71b;" + "-jfx-unselected-color: #fba71b;");
+			sendingRadioC.setStyle("-fx-text-fill: #57b757;" + "-jfx-selected-color: #57b757;" + "-jfx-unselected-color: #57b757;");
+			sendingRadioD.setStyle("-fx-text-fill: #41a9c9;" + "-jfx-selected-color: #41a9c9;" + "-jfx-unselected-color: #41a9c9;");
+			sendingRadioE.setStyle("-fx-text-fill: #4258c9;" + "-jfx-selected-color: #4258c9;" + "-jfx-unselected-color: #4258c9;");
 		}
 
 		private void initializeAutoSelectToggle()
@@ -785,19 +778,28 @@ public final class MultipleChoicePaneController
 		{
 			/************************ Name Column ***********************/
 			nameColumn = new JFXTreeTableColumn<>("Name");
-			nameColumn.setCellValueFactory(param -> param.getValue().getValue().name);
+			nameColumn.setCellValueFactory(param ->
+			{
+				if (nameColumn.validateValue(param))
+					return param.getValue().getValue().name;
+				return nameColumn.getComputedValue(param);
+			});
 			nameColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
 			nameColumn.setOnEditCommit(t ->
 			{
-				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().name
-						.set(t.getNewValue());
+				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().name.set(t.getNewValue());
 				saveTreeTable();
 			});
 			nameColumn.setSortable(false);
 
 			/************************ ID Column ***********************/
 			idColumn = new JFXTreeTableColumn<>("ID");
-			idColumn.setCellValueFactory(param -> param.getValue().getValue().id);
+			idColumn.setCellValueFactory(param ->
+			{
+				if (idColumn.validateValue(param))
+					return param.getValue().getValue().id;
+				return idColumn.getComputedValue(param);
+			});
 			idColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
 			idColumn.setOnEditCommit(t ->
 			{
@@ -817,8 +819,7 @@ public final class MultipleChoicePaneController
 				{
 					JFXAlert<Void> alert = new JFXAlert<Void>((Stage) rootPane.getScene().getWindow());
 					JFXDialogLayout layout = new JFXDialogLayout();
-					layout.setBody(new Label(
-							"The ID you entered is not valid, please try again.\n(Click anywhere outside this alert to close it.)"));
+					layout.setBody(new Label("The ID you entered is not valid, please try again.\n(Click anywhere outside this alert to close it.)"));
 					alert.setTitle("Invalid ID");
 					alert.setOverlayClose(true);
 					alert.setAnimation(JFXAlertAnimation.CENTER_ANIMATION);
@@ -839,12 +840,17 @@ public final class MultipleChoicePaneController
 
 			/************************ Note Column ***********************/
 			noteColumn = new JFXTreeTableColumn<>("Note");
-			noteColumn.setCellValueFactory(param -> param.getValue().getValue().note);
+
+			noteColumn.setCellValueFactory(param ->
+			{
+				if (noteColumn.validateValue(param))
+					return param.getValue().getValue().note;
+				return noteColumn.getComputedValue(param);
+			});
 			noteColumn.setCellFactory(p -> new GenericEditableTreeTableCell<>(new TextFieldEditorBuilder()));
 			noteColumn.setOnEditCommit(t ->
 			{
-				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().note
-						.set(t.getNewValue());
+				t.getTreeTableView().getTreeItem(t.getTreeTablePosition().getRow()).getValue().note.set(t.getNewValue());
 				saveTreeTable();
 			});
 
@@ -852,8 +858,7 @@ public final class MultipleChoicePaneController
 
 			/************************ Add items ***********************/
 			idList = FXCollections.observableArrayList();
-			idList.add(new IDTreeObject("FIXED ID", emulator == null ? "null" : emulator.getEmulatorID().toString(),
-					"FIXED"));
+			idList.add(new IDTreeObject("FIXED ID", emulator == null ? "null" : emulator.getEmulatorID().toString(), "FIXED"));
 			for (SavedID id : UserPreferences.getSavedIDList())
 			{
 				idList.add(new IDTreeObject(id.getName(), id.getId().toString(), id.getNote()));
@@ -864,7 +869,6 @@ public final class MultipleChoicePaneController
 			treeTableView.setEditable(true);
 			treeTableView.getColumns().setAll(nameColumn, idColumn, noteColumn);
 			treeTableView.setFixedCellSize(FIXED_TREE_TABLE_CELL_SIZE);// Fixed Height
-
 		}
 
 		private void saveTreeTable()
@@ -902,8 +906,7 @@ public final class MultipleChoicePaneController
 						{
 							emulator.stopAndGoStandby();
 						}
-						emulator.submitAnswer(
-								Answer.valueOf(((JFXRadioButton) sendingToggleGroup.getSelectedToggle()).getText()));
+						emulator.submitAnswer(Answer.valueOf(((JFXRadioButton) sendingToggleGroup.getSelectedToggle()).getText()));
 						Platform.runLater(() ->
 						{
 							endSending(isCapturing);
@@ -934,8 +937,7 @@ public final class MultipleChoicePaneController
 							for (int i = 0; i < sendingSlider.getValue(); i++)
 							{
 								emulator.submitInSubmitMode(IClickerID.idFromString(idColumn.getCellData(indexID)),
-										Answer.valueOf(
-												((JFXRadioButton) sendingToggleGroup.getSelectedToggle()).getText()));
+										Answer.valueOf(((JFXRadioButton) sendingToggleGroup.getSelectedToggle()).getText()));
 								submitCount++;
 								final double dfi = i, fSubmitCount = submitCount;
 								Platform.runLater(() ->
@@ -1109,8 +1111,7 @@ public final class MultipleChoicePaneController
 		}
 	}
 
-	private class MultipleChoiceToolbarEventHandler
-			extends PrimaryViewController.AbstractPrimaryViewToolbarEventsHandler
+	private class MultipleChoiceToolbarEventHandler extends PrimaryViewController.AbstractPrimaryViewToolbarEventsHandler
 	{
 
 		@Override
