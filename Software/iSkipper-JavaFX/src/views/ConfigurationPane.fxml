@@ -18,14 +18,14 @@
                         <Font size="24.0" />
                      </font>
                   </Label>
-                  <HBox layoutX="14.0" layoutY="37.0" prefHeight="32.0" prefWidth="137.0" AnchorPane.leftAnchor="8.0">
+                  <HBox layoutX="14.0" layoutY="37.0" prefHeight="32.0" prefWidth="189.0" AnchorPane.leftAnchor="8.0">
                      <children>
                         <Label alignment="BOTTOM_LEFT" prefHeight="32.0" prefWidth="50.0" text="To:">
                            <font>
                               <Font size="24.0" />
                            </font>
                         </Label>
-                        <JFXComboBox fx:id="channelComboBox" prefHeight="32.0" prefWidth="64.0" />
+                        <JFXComboBox fx:id="channelComboBox" prefHeight="32.0" prefWidth="99.0" />
                      </children>
                   </HBox>
                </children>
