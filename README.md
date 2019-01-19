@@ -20,7 +20,7 @@ Features
 * Show polling result in three different charts: Area Chart, Bar Chart, Pie Chart.
 * The channel and ID list are automatically saved on your computer.
 * Cross-platform friendly. (Windows, Mac OS, Linux...)
-* (Any features in original repository [iSkipper](https://github.com/wizard97/iSkipper), but some "dangerous" functions are not included in the GUI program, though they are supported [here](https://github.com/charlescao460/iSkipper-Software/blob/master/Software/Java/iSkipper/src/emulator/Emulator.java))
+* (Any features in original repository [iSkipper](https://github.com/wizard97/iSkipper), but some "dangerous" functions are not included in the GUI program, though they are supported [here](https://github.com/charlescao460/iSkipper-Software/blob/master/Software/Java/iSkipper/src/com/csr460/iSkipper/emulator/Emulator.java))
 
 How to use it?
 -------
