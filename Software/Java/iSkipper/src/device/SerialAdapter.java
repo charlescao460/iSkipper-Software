@@ -16,7 +16,7 @@ import handler.ReceivedPacketHandlerInterface;
  * @author CSR
  *
  */
-public class SerialAdapter
+public class SerialAdapter extends AbstractSerialAdapter
 {
 	private final static int OPEN_SERIAL_WAIT_TIME = 1500;
 	private final static int WRITE_TIMEOUT = 10_000;
@@ -79,6 +79,7 @@ public class SerialAdapter
 	/**
 	 * @return whether this serial port is available for communication.
 	 */
+	@Override
 	public boolean isAvailable()
 	{
 		return serialPort != null ? serialPort.isOpen() : false;
@@ -89,6 +90,7 @@ public class SerialAdapter
 	 * 
 	 * @return Whether successfully close the port.
 	 */
+	@Override
 	public boolean close()
 	{
 		if (serialPort != null)
@@ -102,6 +104,7 @@ public class SerialAdapter
 	 * @param toWrite
 	 *            send data to this serial port
 	 */
+	@Override
 	public void writeBytes(byte[] toWrite)
 	{
 		serialPort.writeBytes(toWrite, toWrite.length);
@@ -111,6 +114,7 @@ public class SerialAdapter
 	 * @param toWrite
 	 *            send one single byte to this serial port
 	 */
+	@Override
 	public void writeByte(byte toWrite)
 	{
 		serialPort.writeBytes(new byte[]
@@ -120,6 +124,7 @@ public class SerialAdapter
 	/**
 	 * @return the packetHandler
 	 */
+	@Override
 	public ReceivedPacketHandlerInterface getPacketHandler()
 	{
 		return packetHandler;
@@ -132,6 +137,7 @@ public class SerialAdapter
 	 * @throws NullPointerException
 	 *             when the input was null
 	 */
+	@Override
 	public void setPacketHandler(ReceivedPacketHandlerInterface packetHandler)
 	{
 		if (packetHandler == null)

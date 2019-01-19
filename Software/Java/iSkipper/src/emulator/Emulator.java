@@ -3,6 +3,7 @@
  */
 package emulator;
 
+import device.AbstractSerialAdapter;
 import device.SerialAdapter;
 import handler.AttackHandler;
 import handler.CaptureHandler;
@@ -22,7 +23,7 @@ import support.Transcoding;
 public class Emulator
 {
 	private static final int SERIAL_WAIT_TIME = 5000;
-	private SerialAdapter serial;
+	private AbstractSerialAdapter serial;
 	private volatile EmulatorModes mode;
 	private volatile ReceivedPacketHandlerInterface handler;
 	private volatile IClickerID emulatorID;
@@ -338,7 +339,7 @@ public class Emulator
 	/**
 	 * @return the serial adapter
 	 */
-	public SerialAdapter getSerial()
+	public AbstractSerialAdapter getSerial()
 	{
 		return serial;
 	}
@@ -347,7 +348,7 @@ public class Emulator
 	 * @param serial
 	 *            the serial port to set
 	 */
-	public void setSerial(SerialAdapter serial)
+	public void setSerial(AbstractSerialAdapter serial)
 	{
 		this.serial = serial;
 	}
