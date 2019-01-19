@@ -4,7 +4,6 @@
 package com.csr460.iSkipper.emulator;
 
 import com.csr460.iSkipper.device.AbstractSerialAdapter;
-import com.csr460.iSkipper.device.SerialAdapter;
 import com.csr460.iSkipper.handler.AttackHandler;
 import com.csr460.iSkipper.handler.CaptureHandler;
 import com.csr460.iSkipper.handler.PrintHandler;
@@ -29,7 +28,7 @@ public class Emulator
 	private volatile IClickerID emulatorID;
 	private volatile IClickerChannel emulatorChannel;
 
-	public Emulator(SerialAdapter serialPort)
+	public Emulator(AbstractSerialAdapter serialPort)
 	{
 		if (serialPort == null)
 			throw new NullPointerException("Serial port object is null when constructing an Emulator object.\n");
@@ -237,9 +236,10 @@ public class Emulator
 	}
 
 	/**
-	 * Enter SUBMIT mode, in this mode the com.csr460.iSkipper.device would keep listen serial port for
-	 * input IDs and answers to submit. And write "ACK\n" when one answer is sent.
-	 * The answers and IDs can be sent by {@link #submitAnswer(Answer)} method.
+	 * Enter SUBMIT mode, in this mode the com.csr460.iSkipper.device would keep
+	 * listen serial port for input IDs and answers to submit. And write "ACK\n"
+	 * when one answer is sent. The answers and IDs can be sent by
+	 * {@link #submitAnswer(Answer)} method.
 	 * 
 	 * Call {@link #stopAndGoStandby()} to stop SUBMIT mode.
 	 * 
@@ -307,8 +307,8 @@ public class Emulator
 	 * @param count
 	 *            How many time you want to submit
 	 * @param handler
-	 *            The AttackHandler to handle the response from the com.csr460.iSkipper.device during
-	 *            attacking.
+	 *            The AttackHandler to handle the response from the
+	 *            com.csr460.iSkipper.device during attacking.
 	 * @return Whether successfully start attacking.
 	 */
 	public boolean startAttack(Answer answer, long count, AttackHandler handler)
