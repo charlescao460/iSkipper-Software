@@ -3,10 +3,10 @@ package application;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import com.csr460.iSkipper.emulator.Emulator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDecorator;
 
-import emulator.Emulator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

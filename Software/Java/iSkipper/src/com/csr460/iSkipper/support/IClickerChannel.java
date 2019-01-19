@@ -1,7 +1,7 @@
 /**
  * 
  */
-package support;
+package com.csr460.iSkipper.support;
 
 /**
  * @author CSR

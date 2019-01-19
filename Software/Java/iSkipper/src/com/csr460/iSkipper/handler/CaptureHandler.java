@@ -1,11 +1,11 @@
-package handler;
+package com.csr460.iSkipper.handler;
 
-import device.ReceivedPacketEvent;
-import support.Answer;
-import support.AnswerPacket;
-import support.AnswerPacketHashMap;
-import support.IClickerID;
-import support.Transcoding;
+import com.csr460.iSkipper.device.ReceivedPacketEvent;
+import com.csr460.iSkipper.support.Answer;
+import com.csr460.iSkipper.support.AnswerPacket;
+import com.csr460.iSkipper.support.AnswerPacketHashMap;
+import com.csr460.iSkipper.support.IClickerID;
+import com.csr460.iSkipper.support.Transcoding;
 
 /**
  * @author CSR

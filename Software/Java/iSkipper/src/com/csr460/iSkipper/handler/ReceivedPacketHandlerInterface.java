@@ -1,11 +1,11 @@
 /**
  * 
  */
-package handler;
+package com.csr460.iSkipper.handler;
 
 import java.util.EventListener;
 
-import device.ReceivedPacketEvent;
+import com.csr460.iSkipper.device.ReceivedPacketEvent;
 
 /**
  * The interface of response packet Handler

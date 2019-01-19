@@ -5,6 +5,7 @@ package views;
 
 import java.io.IOException;
 
+import com.csr460.iSkipper.emulator.Emulator;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
@@ -19,7 +20,6 @@ import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
 import application.utils.DialogPrintStream;
 import application.utils.FocusOnMouse;
 import application.utils.TextDialog;
-import emulator.Emulator;
 import javafx.animation.Transition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;

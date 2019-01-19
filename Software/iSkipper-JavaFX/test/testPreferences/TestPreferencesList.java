@@ -2,10 +2,11 @@ package testPreferences;
 
 import java.util.Random;
 
+import com.csr460.iSkipper.support.IClickerID;
+
 import application.utils.preference.SavedID;
 import application.utils.preference.SavedID.SavedIDList;
 import application.utils.preference.UserPreferences;
-import support.IClickerID;
 
 public class TestPreferencesList
 {

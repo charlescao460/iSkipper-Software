@@ -1,9 +1,9 @@
 /**
  * 
  */
-package device;
+package com.csr460.iSkipper.device;
 
-import handler.ReceivedPacketHandlerInterface;
+import com.csr460.iSkipper.handler.ReceivedPacketHandlerInterface;
 
 /**
  * The abstract class for serial adapter. Extend this class to use your own

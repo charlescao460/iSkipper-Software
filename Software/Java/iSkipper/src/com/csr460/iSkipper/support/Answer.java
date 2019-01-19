@@ -1,4 +1,4 @@
-package support;
+package com.csr460.iSkipper.support;
 
 /**
  * The enumeration class that represents iClicker answers

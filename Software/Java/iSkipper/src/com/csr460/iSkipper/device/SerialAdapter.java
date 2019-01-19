@@ -1,9 +1,8 @@
-package device;
+package com.csr460.iSkipper.device;
 
+import com.csr460.iSkipper.handler.PrintHandler;
+import com.csr460.iSkipper.handler.ReceivedPacketHandlerInterface;
 import com.fazecast.jSerialComm.SerialPort;
-
-import handler.PrintHandler;
-import handler.ReceivedPacketHandlerInterface;
 
 /**
  * The class for all SerialPort communications.</br>

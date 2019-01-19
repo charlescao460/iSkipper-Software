@@ -1,9 +1,9 @@
-package console;
+package com.csr460.iSkipper.console;
 
 import java.util.Scanner;
 
-import device.SerialAdapter;
-import support.Transcoding;
+import com.csr460.iSkipper.device.SerialAdapter;
+import com.csr460.iSkipper.support.Transcoding;
 
 public class COMMonitor
 {

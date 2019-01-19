@@ -10,8 +10,9 @@ import java.nio.file.Files;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
+import com.csr460.iSkipper.support.IClickerChannel;
+
 import application.utils.preference.SavedID.SavedIDList;
-import support.IClickerChannel;
 
 /**
  * The Class to storage user's settings and preferences. (E.g. Channel, IDs)

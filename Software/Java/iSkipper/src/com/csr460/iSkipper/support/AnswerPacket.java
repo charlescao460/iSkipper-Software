@@ -1,4 +1,4 @@
-package support;
+package com.csr460.iSkipper.support;
 
 /**
  * The class for storage of iClicker Answer Packet.</br>

@@ -1,4 +1,4 @@
-package support;
+package com.csr460.iSkipper.support;
 
 /**
  * Class for converting between different encodings. (e.g. ASCII and Unicode).

@@ -1,19 +1,19 @@
 /**
  * 
  */
-package emulator;
+package com.csr460.iSkipper.emulator;
 
-import device.AbstractSerialAdapter;
-import device.SerialAdapter;
-import handler.AttackHandler;
-import handler.CaptureHandler;
-import handler.PrintHandler;
-import handler.ReceivedPacketHandlerInterface;
-import support.Answer;
-import support.AnswerPacketHashMap;
-import support.IClickerChannel;
-import support.IClickerID;
-import support.Transcoding;
+import com.csr460.iSkipper.device.AbstractSerialAdapter;
+import com.csr460.iSkipper.device.SerialAdapter;
+import com.csr460.iSkipper.handler.AttackHandler;
+import com.csr460.iSkipper.handler.CaptureHandler;
+import com.csr460.iSkipper.handler.PrintHandler;
+import com.csr460.iSkipper.handler.ReceivedPacketHandlerInterface;
+import com.csr460.iSkipper.support.Answer;
+import com.csr460.iSkipper.support.AnswerPacketHashMap;
+import com.csr460.iSkipper.support.IClickerChannel;
+import com.csr460.iSkipper.support.IClickerID;
+import com.csr460.iSkipper.support.Transcoding;
 
 /**
  * @author CSR
@@ -237,7 +237,7 @@ public class Emulator
 	}
 
 	/**
-	 * Enter SUBMIT mode, in this mode the device would keep listen serial port for
+	 * Enter SUBMIT mode, in this mode the com.csr460.iSkipper.device would keep listen serial port for
 	 * input IDs and answers to submit. And write "ACK\n" when one answer is sent.
 	 * The answers and IDs can be sent by {@link #submitAnswer(Answer)} method.
 	 * 
@@ -307,7 +307,7 @@ public class Emulator
 	 * @param count
 	 *            How many time you want to submit
 	 * @param handler
-	 *            The AttackHandler to handle the response from the device during
+	 *            The AttackHandler to handle the response from the com.csr460.iSkipper.device during
 	 *            attacking.
 	 * @return Whether successfully start attacking.
 	 */

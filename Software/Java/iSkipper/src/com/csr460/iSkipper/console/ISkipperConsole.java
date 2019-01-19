@@ -1,15 +1,15 @@
-package console;
+package com.csr460.iSkipper.console;
 
 import java.util.Scanner;
 
-import device.SerialAdapter;
-import emulator.Emulator;
-import emulator.EmulatorModes;
-import handler.AttackHandler;
-import handler.PrintHandler;
-import support.Answer;
-import support.AnswerPacketHashMap;
-import support.IClickerChannel;
+import com.csr460.iSkipper.device.SerialAdapter;
+import com.csr460.iSkipper.emulator.Emulator;
+import com.csr460.iSkipper.emulator.EmulatorModes;
+import com.csr460.iSkipper.handler.AttackHandler;
+import com.csr460.iSkipper.handler.PrintHandler;
+import com.csr460.iSkipper.support.Answer;
+import com.csr460.iSkipper.support.AnswerPacketHashMap;
+import com.csr460.iSkipper.support.IClickerChannel;
 
 public class ISkipperConsole
 {

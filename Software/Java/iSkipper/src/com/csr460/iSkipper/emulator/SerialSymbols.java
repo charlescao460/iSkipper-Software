@@ -1,4 +1,4 @@
-package emulator;
+package com.csr460.iSkipper.emulator;
 
 /**
  * @author CSR

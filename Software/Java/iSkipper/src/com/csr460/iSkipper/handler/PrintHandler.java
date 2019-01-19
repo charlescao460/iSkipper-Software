@@ -1,10 +1,10 @@
 /**
  * 
  */
-package handler;
+package com.csr460.iSkipper.handler;
 
-import device.ReceivedPacketEvent;
-import support.Transcoding;
+import com.csr460.iSkipper.device.ReceivedPacketEvent;
+import com.csr460.iSkipper.support.Transcoding;
 
 /**
  * @author CSR

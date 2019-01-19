@@ -1,16 +1,15 @@
 /**
  * 
  */
-package device;
+package com.csr460.iSkipper.device;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
+import com.csr460.iSkipper.handler.ReceivedPacketHandlerInterface;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-
-import handler.ReceivedPacketHandlerInterface;
 
 /**
  * This class keeps buffering the data from serial port, and sends

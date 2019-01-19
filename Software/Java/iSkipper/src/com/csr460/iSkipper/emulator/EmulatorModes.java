@@ -1,7 +1,7 @@
 /**
  * 
  */
-package emulator;
+package com.csr460.iSkipper.emulator;
 
 /**
  * The class to identify emulator's different modes based on Arduino Sketch

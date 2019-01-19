@@ -2,7 +2,7 @@ package application.utils.preference;
 
 import java.util.ArrayList;
 
-import support.IClickerID;
+import com.csr460.iSkipper.support.IClickerID;
 
 /**
  * The class to storage ID related information on the GUI.

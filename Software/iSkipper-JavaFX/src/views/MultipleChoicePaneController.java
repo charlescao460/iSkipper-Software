@@ -5,6 +5,16 @@ package views;
 
 import java.util.ArrayList;
 
+import com.csr460.iSkipper.device.ReceivedPacketEvent;
+import com.csr460.iSkipper.emulator.Emulator;
+import com.csr460.iSkipper.emulator.EmulatorModes;
+import com.csr460.iSkipper.handler.CaptureHandler;
+import com.csr460.iSkipper.handler.PrintHandler;
+import com.csr460.iSkipper.support.Answer;
+import com.csr460.iSkipper.support.AnswerPacketHashMap;
+import com.csr460.iSkipper.support.IClickerChannel;
+import com.csr460.iSkipper.support.IClickerID;
+import com.csr460.iSkipper.support.AnswerPacketHashMap.AnswerStats;
 import com.jfoenix.animation.alert.JFXAlertAnimation;
 import com.jfoenix.controls.JFXAlert;
 import com.jfoenix.controls.JFXButton;
@@ -26,11 +36,6 @@ import com.jfoenix.effects.JFXDepthManager;
 import application.utils.preference.SavedID;
 import application.utils.preference.SavedID.SavedIDList;
 import application.utils.preference.UserPreferences;
-import device.ReceivedPacketEvent;
-import emulator.Emulator;
-import emulator.EmulatorModes;
-import handler.CaptureHandler;
-import handler.PrintHandler;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -58,11 +63,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import support.Answer;
-import support.AnswerPacketHashMap;
-import support.AnswerPacketHashMap.AnswerStats;
-import support.IClickerChannel;
-import support.IClickerID;
 import views.PrimaryViewController.AbstractPrimaryViewToolbarEventsHandler;
 
 /**

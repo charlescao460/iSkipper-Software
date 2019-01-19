@@ -1,8 +1,8 @@
-package device;
+package com.csr460.iSkipper.device;
 
 import java.util.EventObject;
 
-import support.Transcoding;
+import com.csr460.iSkipper.support.Transcoding;
 
 /**
  * The event that triggered when the SerialListener had received a complete

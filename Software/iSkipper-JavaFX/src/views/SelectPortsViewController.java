@@ -3,6 +3,9 @@
  */
 package views;
 
+import com.csr460.iSkipper.device.SerialAdapter;
+import com.csr460.iSkipper.emulator.Emulator;
+import com.csr460.iSkipper.support.IClickerChannel;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXSpinner;
@@ -11,8 +14,6 @@ import com.jfoenix.transitions.JFXFillTransition;
 import application.Main;
 import application.utils.FocusOnMouse;
 import application.utils.preference.UserPreferences;
-import device.SerialAdapter;
-import emulator.Emulator;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,7 +22,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import support.IClickerChannel;
 
 /**
  * @author CSR

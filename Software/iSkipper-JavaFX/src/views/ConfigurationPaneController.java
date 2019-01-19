@@ -7,18 +7,18 @@ import java.util.stream.Collectors;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.StyleClassedTextArea;
 
+import com.csr460.iSkipper.emulator.Emulator;
+import com.csr460.iSkipper.support.IClickerChannel;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.effects.JFXDepthManager;
 
 import application.utils.preference.UserPreferences;
-import emulator.Emulator;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.layout.AnchorPane;
-import support.IClickerChannel;
 
 public final class ConfigurationPaneController
 {

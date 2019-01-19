@@ -2,8 +2,9 @@ package testPreferences;
 
 import java.util.Scanner;
 
+import com.csr460.iSkipper.support.IClickerChannel;
+
 import application.utils.preference.UserPreferences;
-import support.IClickerChannel;
 
 public class TestPreferencesChannel
 {
