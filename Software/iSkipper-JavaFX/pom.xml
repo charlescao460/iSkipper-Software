@@ -88,7 +88,7 @@
 			</dependency>
 		<dependency>
 			<groupId>com.csr460.iSkipper</groupId>
-			<artifactId>iSkipper</artifactId>
+			<artifactId>iSkipper-Core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.fxmisc.richtext</groupId>
@@ -142,7 +142,7 @@
 			</dependency>
 			<dependency>
 				<groupId>com.csr460.iSkipper</groupId>
-				<artifactId>iSkipper</artifactId>
+				<artifactId>iSkipper-Core</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
 			<dependency>
