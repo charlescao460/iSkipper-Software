@@ -15,7 +15,7 @@ import com.csr460.iSkipper.handler.ReceivedPacketHandlerInterface;
  */
 public abstract class AbstractSerialAdapter
 {
-	private ReceivedPacketHandlerInterface packetHandler;
+	protected ReceivedPacketHandlerInterface packetHandler;
 
 	/**
 	 * @param packetHandler
