@@ -113,8 +113,7 @@ public class IClickerID implements Cloneable
 	@Override
 	public boolean equals(Object obj)
 	{
-		return obj.getClass().equals(this.getClass()) ? ((IClickerID) obj).getID() == this.ID
-				: false;
+		return obj.getClass().equals(this.getClass()) ? ((IClickerID) obj).getID() == this.ID : false;
 	}
 
 	/**
@@ -158,7 +157,7 @@ public class IClickerID implements Cloneable
 	{
 		try
 		{
-			int id = Integer.parseUnsignedInt(str, 16);
+			int id = (int) Long.parseLong(str, 16);
 			if (!isValidID(id))
 				return null;
 			return new IClickerID(id);
