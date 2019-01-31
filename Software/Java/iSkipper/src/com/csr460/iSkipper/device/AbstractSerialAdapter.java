@@ -15,7 +15,7 @@ import com.csr460.iSkipper.handler.ReceivedPacketHandlerInterface;
  */
 public abstract class AbstractSerialAdapter
 {
-	protected ReceivedPacketHandlerInterface packetHandler;
+	protected volatile ReceivedPacketHandlerInterface packetHandler;
 
 	/**
 	 * @param packetHandler
@@ -24,7 +24,7 @@ public abstract class AbstractSerialAdapter
 	 * @throws NullPointerException
 	 *             when the input was null
 	 */
-	public void setPacketHandler(ReceivedPacketHandlerInterface packetHandler)
+	public synchronized void setPacketHandler(ReceivedPacketHandlerInterface packetHandler)
 	{
 		if (packetHandler == null)
 			throw new NullPointerException("Cannot use a null packetHandler!");

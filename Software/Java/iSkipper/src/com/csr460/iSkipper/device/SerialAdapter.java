@@ -17,7 +17,7 @@ import com.fazecast.jSerialComm.SerialPort;
  */
 public class SerialAdapter extends AbstractSerialAdapter
 {
-	private final static int OPEN_SERIAL_WAIT_TIME = 1500;
+	private final static int OPEN_SERIAL_WAIT_TIME = 3500;
 	private final static int WRITE_TIMEOUT = 10_000;
 	private final static int READ_TIMEOUT = 10_000;
 	/* 115200,8,1,N for Arduino's port */

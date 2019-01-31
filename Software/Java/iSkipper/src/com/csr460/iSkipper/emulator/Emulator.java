@@ -48,7 +48,6 @@ public class Emulator
 	{
 		if (mode != EmulatorModes.DISCONNECTED)
 			return false;
-		serial.writeByte(SerialSymbols.OP_COMFIRM_CONNECTION);// Send command
 		serial.setPacketHandler((packet) ->
 		{
 			// This packet handler are called in another thread.
@@ -72,6 +71,7 @@ public class Emulator
 				// keep going
 			}
 		});
+		serial.writeByte(SerialSymbols.OP_COMFIRM_CONNECTION);// Send command
 		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.STANDBY;
@@ -95,7 +95,6 @@ public class Emulator
 	{
 		if (mode != EmulatorModes.STANDBY)
 			return false;
-		serial.writeByte(SerialSymbols.OP_CAPTURE);
 		serial.setPacketHandler((packet) ->
 		{
 
@@ -108,6 +107,7 @@ public class Emulator
 			}
 			System.out.print(packet);
 		});
+		serial.writeByte(SerialSymbols.OP_CAPTURE);
 		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.CAPTURE;
@@ -128,7 +128,6 @@ public class Emulator
 			throw new NullPointerException("CaptureHandler Cannot Be Null!");
 		if (mode != EmulatorModes.STANDBY)
 			return false;
-		serial.writeByte(SerialSymbols.OP_CAPTURE);
 		serial.setPacketHandler((packet) ->
 		{
 
@@ -141,6 +140,7 @@ public class Emulator
 			}
 			System.out.print(packet);
 		});
+		serial.writeByte(SerialSymbols.OP_CAPTURE);
 		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.CAPTURE;
@@ -158,7 +158,6 @@ public class Emulator
 			return true;
 		else if (mode == EmulatorModes.DISCONNECTED)
 			return false;
-		serial.writeByte(SerialSymbols.OP_STOP);
 		serial.setPacketHandler((packet) ->
 		{
 			if (packet.dataContains(SerialSymbols.RES_STANDBY))
@@ -170,6 +169,7 @@ public class Emulator
 			}
 			System.out.print(packet);
 		});
+		serial.writeByte(SerialSymbols.OP_STOP);
 		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.STANDBY;
@@ -187,7 +187,6 @@ public class Emulator
 		if (channel == null)
 			throw new NullPointerException("Null channel when changing channel.");
 		String toSend = (char) SerialSymbols.OP_CHANGE_CHANNEL + "," + channel.toString();
-		serial.writeBytes(Transcoding.stringToBytes(toSend));
 		serial.setPacketHandler((packet) ->
 		{
 			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
@@ -198,6 +197,7 @@ public class Emulator
 			}
 		});
 		mode = EmulatorModes.BUSY;
+		serial.writeBytes(Transcoding.stringToBytes(toSend));
 		waitForHandler();
 		mode = EmulatorModes.STANDBY;
 		serial.setPacketHandler(handler);
@@ -218,7 +218,6 @@ public class Emulator
 		if (answer == null)
 			throw new NullPointerException("Null answer when submitting an answer.");
 		String toSend = (char) SerialSymbols.OP_ANSWER + "," + answer.toString();
-		serial.writeBytes(Transcoding.stringToBytes(toSend));
 		serial.setPacketHandler((packet) ->
 		{
 			if (packet.dataContains(SerialSymbols.RES_STANDBY))
@@ -229,6 +228,7 @@ public class Emulator
 			System.out.print(packet);
 		});
 		mode = EmulatorModes.ANSWER;
+		serial.writeBytes(Transcoding.stringToBytes(toSend));
 		waitForHandler();
 		mode = EmulatorModes.STANDBY;
 		serial.setPacketHandler(handler);
@@ -253,7 +253,6 @@ public class Emulator
 			return false;
 		if (handler == null)
 			throw new NullPointerException("Handler cannot be null when start submit mode.");
-		serial.writeByte(SerialSymbols.OP_SUBMIT);
 		serial.setPacketHandler(packet ->
 		{
 			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
@@ -266,6 +265,7 @@ public class Emulator
 			System.out.print(packet);
 		});
 		mode = EmulatorModes.BUSY;
+		serial.writeByte(SerialSymbols.OP_SUBMIT);
 		waitForHandler();
 		if (mode != EmulatorModes.SUBMIT)
 		{
@@ -321,7 +321,6 @@ public class Emulator
 			throw new NullPointerException("Null handler when start attack.");
 		String strAns = answer == null ? "R" : answer.toString();
 		String toSend = (char) SerialSymbols.OP_ATTACK + "," + strAns + "," + String.valueOf(count);
-		serial.writeBytes(Transcoding.stringToBytes(toSend));
 		serial.setPacketHandler((packet) ->
 		{
 			if (packet.dataContains(SerialSymbols.RES_SUCCESS))
@@ -331,6 +330,7 @@ public class Emulator
 				return;
 			}
 		});
+		serial.writeBytes(Transcoding.stringToBytes(toSend));
 		waitForHandler();
 		serial.setPacketHandler(handler);
 		return mode == EmulatorModes.ATTACK;
