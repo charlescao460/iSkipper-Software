@@ -1,0 +1,13 @@
+{
+    "platform": "mac",
+    "jdk": "iSkipper-JRE-MacOS",
+    "executable": "iSkipper",
+    "classpath": [
+        "iSkipper.executable.Ver.1.0.2.jar"
+    ],
+    "mainclass": "application.EntryPoint",
+    "vmargs": [],
+    "output": "iSkipper.App",
+    "icon": "icon-black.icns",
+    "bundle": "com.csr460.iSkipper"
+}
