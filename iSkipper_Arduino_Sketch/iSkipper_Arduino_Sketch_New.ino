@@ -82,6 +82,7 @@ void loop()
 	}
 	case OP_CHANGE_CHANNEL:
 	{
+		changeChannel(serialCommand);
 		break;
 	}
 	case OP_ATTACK:
@@ -99,6 +100,7 @@ void loop()
 	}
 	default:
 	{
+		idle();
 		break;
 	}
 	}
@@ -108,6 +110,19 @@ void loop()
 void recvPacketHandler(iClickerPacket *recvd)
 {
 	recvBuf.add(*recvd);
+}
+
+static inline void idle()
+{
+	Serial.println(RES_STANDBY);
+	Serial.println(F("No Running Progress, waiting for commands..."));
+	for (uint16_t wait = SERIAL_NO_COMMAND_WAIT_TIME; wait > 0; wait--)
+	{
+		if (Serial.available() > 0)
+			break;
+		delay(1);
+	}
+	return;
 }
 
 static inline void capture()
@@ -139,6 +154,26 @@ static inline void capture()
 	Serial.println(F("End Capture"));
 }
 
+static inline void changeChannel(const char* const arguments)
+{
+	/*Command Format:
+	*	c,<Channel>/0
+	*/
+	clicker.setChannel(getChannelByString(arguments));
+	if (arguments[0] > 'D' || arguments[0] < 'A' || arguments[1] > 'D' || arguments[1] < 'A')
+	{
+		Serial.println(F("Illegal input Channel, set to default AA channel"));
+		Serial.println(RES_FAIL);
+	}
+	else
+	{
+		Serial.println(RES_SUCCESS);
+		Serial.print(F("Successfully change channel to: "));
+		Serial.print(arguments[0]);
+		Serial.print(arguments[1]);
+		Serial.println();
+	}
+}
 
 /*
 *Read input commands from Serial ports
