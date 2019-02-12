@@ -67,15 +67,16 @@ void loop()
 	char op = processSerialInput(serialCommand, sizeof(serialCommand));
 	switch (op)
 	{
-	case OP_CAPTURE: 
+	case OP_CAPTURE:
 	{
+		capture();
 		break;
 	}
 	case OP_SUBMIT:
 	{
 		break;
 	}
-	case OP_ANSWER: 
+	case OP_ANSWER:
 	{
 		break;
 	}
@@ -93,6 +94,7 @@ void loop()
 	}
 	case OP_RESET:
 	{
+		reset();
 		break;
 	}
 	default:
@@ -101,6 +103,40 @@ void loop()
 	}
 	}
 
+}
+
+void recvPacketHandler(iClickerPacket *recvd)
+{
+	recvBuf.add(*recvd);
+}
+
+static inline void capture()
+{
+	/*Start Capturing Response Format:
+	*	Start capture\n
+	*	[ACK]\n
+	*/
+	Serial.println(F("Start capture"));
+	Serial.println(RES_SUCCESS);
+
+	const char reponseFormat[] = "Captured,%c,%02X%02X%02X%02X\n"; //Reponse Format
+	iClickerPacket r;
+	const uint8_t* id;
+	char ans;
+	char msg[30];
+	clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+	while (!shouldStop())
+	{
+		while (recvBuf.pull(&r))
+		{
+			id = r.packet.answerPacket.id;
+			ans = iClickerEmulator::answerChar(r.packet.answerPacket.answer);
+			snprintf(msg, sizeof(msg), reponseFormat, ans, id[0], id[1], id[2], id[3]);
+			printf(msg);
+		}
+	}
+	clicker.stopPromiscuous();
+	Serial.println(F("End Capture"));
 }
 
 
@@ -144,6 +180,12 @@ static iClickerChannel getChannelByString(const char *const str)
 	if (index > NUM_ICLICKER_CHANNELS - 1 || index < 0)
 		return iClickerChannels::channels[0]; //return AA if illegal input
 	return iClickerChannels::channels[index];
+}
+
+//Check whether there is an OP_STOP recieved
+static inline bool shouldStop()
+{
+	return Serial.read() == OP_STOP;
 }
 
 //Reset function jump to address 0, this would not fix problem caused by wild pointers.
