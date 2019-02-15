@@ -79,15 +79,37 @@ If you're not interesting in development of this software, you can **skip** foll
 * Java Development Kit (JDK) **11**
 * [Apache Maven](https://maven.apache.org/)
 
+**Installing Apache Maven**
+
+1. Go to the website linked above and find the "Download" link for your OS.
+
+2. Unless you know what you're doing (in which case you aren't reading this), you want to download the .zip version.
+
+3. Unzip the .zip using your favorite decompression tool and move the resultant folder somewhere safe (Documents or something, just get it out of Downloads). 
+
+4. Add the "bin" folder (inside the folder you just moved) to your Path system variable. On Windows you do this by going to Control Panel > System and Secutirty > System > Advanced System Settings > Environment Variables and finding the "Path" variable. Select it, then select "edit" then "new" then "browse" and find the bin folder. Click "OK" until all the windows are gone (3 times) then click "Apply". You have now added the mvn command to your path. Restart CMD and type "mvn -v" to ensure you did this step correctly. On Mac or Linux do a google on how to do this.
+
 **Build**
 
 There two maven projects. One is `iSkipper` (pom.xml [here](https://github.com/charlescao460/iSkipper-Software/blob/master/Software/Java/iSkipper/pom.xml)), and another is `iSkipper-JavaFX`(pom.xml [here](https://github.com/charlescao460/iSkipper-Software/blob/master/Software/iSkipper-JavaFX/pom.xml)).
 
 1. Complie and **install** `iSkipper` into your local maven repository (use `install` as goals).
+    
+    * Navigate to iSkipper-Software-master\iSkipper-Software-master\Software\Java\iSkipper and open a powershell/cmd/terminal window here. If you're on Windows you can ctrl+shift+right-click and click "Open Powershell window here". 
+
+    * Type "`mvn install`" and you're done.
 
 2. Compile and run `iSkipper-JavaFX` (Use `clean compile exec:java`).
 
+    * Navigate to iSkipper-Software-master\iSkipper-Software-master\Software\iSkipper-JavaFX and open a powershell/cmd/terminal windows here. If you're on Windows you can ctrl+shift+right-click and click "Open Powershell window here".
+
+    * Type "`mvn clean compile exec:java`" and you're done.
+
 3. If you want export a single executable JAR, use `clean compile assembly:single`
+
+    * Navigate to iSkipper-Software-master\iSkipper-Software-master\Software\iSkipper-JavaFX and open a powershell/cmd/terminal windows here. If you're on Windows you can ctrl+shift+right-click and click "Open Powershell window here".
+
+    * Type "`mvn clean compile assembly:single`" and you're done.
 
 4. (Optional) To delivery a ready-to-use package, use `jlink` to generated our customize Java Runtime Enviroment(JRE):
 ```shell
