@@ -116,6 +116,12 @@ There two maven projects. One is `iSkipper` (pom.xml [here](https://github.com/c
 jlink --no-man-pages --add-modules  java.base,java.datatransfer,java.desktop,java.prefs,java.scripting,java.xml,jdk.jsobject,jdk.unsupported,jdk.unsupported.desktop,jdk.xml.dom --compress=2 --output iSkipper-JRE
 ```
 
+TODOs
+---------
+* Implement session opening and closing.
+* Implement full-auto modes.
+
+
 See Also
 ---------
 The original iSkipper repository: [wizard97/iSkipper](https://github.com/wizard97/iSkipper).
