@@ -39,7 +39,7 @@ How to use it?
 **Connect your hardwares**
 
 Basically, just read your modular's pin maps and connect the SPI pins one-by-one.
-For example, you can check the tutorials of connecting Arduino Nano and RFM69 [here](https://learn.sparkfun.com/tutorials/rfm69hcw-hookup-guide/all).Though they are using RFM69HCW, which is not compatible to this project.
+For example, you can check the tutorials of connecting Arduino Nano and RFM69 [here](https://learn.sparkfun.com/tutorials/rfm69hcw-hookup-guide/all).Though they are using RFM69HCW, it should still work fine.
 
 ### Or, make your own PCBs! ###
 You can go and check my related hardware project [iSkipper-In-One-Package](https://github.com/charlescao460/iSkipper-In-One-Package) to design and manufacture your own iSkipper PCBs!
