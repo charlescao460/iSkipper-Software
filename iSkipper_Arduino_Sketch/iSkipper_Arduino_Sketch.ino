@@ -280,18 +280,25 @@ static inline void replace(const char cTargetAns)
 	uint8_t* id;
 	char ans;
 	char msg[50];
+	bool recieved = false;
 	clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
 	while (!shouldStop())
 	{
 		while (recvBuf.pull(&r))
 		{
+			recieved = true;
+			clicker.stopPromiscuous();
 			id = r.packet.answerPacket.id;
 			ans = iClickerEmulator::answerChar((iClickerAnswer)r.packet.answerPacket.answer);
 			clicker.submitAnswer(id, clicker.charAnswer(cTargetAns));
 			snprintf(msg, sizeof(msg), reponseFormat, ans, id[0], id[1], id[2], id[3]);
 			Serial.print(msg);
 		}
-		clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+		if(recieved)
+		{
+			clicker.startPromiscuous(CHANNEL_SEND, recvPacketHandler);
+			recieved = false;
+		}
 	}
 	clicker.stopPromiscuous();
 	Serial.println(F("End Replacing"));
